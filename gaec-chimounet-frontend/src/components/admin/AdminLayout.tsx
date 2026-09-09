@@ -43,7 +43,11 @@ export default function AdminLayout() {
                     {isMenuOpen ? "Fermer" : "Menu"}
                 </button>
 
-                <Link className="admin-topbar__brand" to="/admin">
+                <Link
+                    className="admin-topbar__brand"
+                    to="/"
+                    aria-label="GAEC Chimounet, retourner au site"
+                >
                     <img src={logo} alt="" aria-hidden="true" />
                     <span>Gaec Chimounet</span>
                 </Link>
