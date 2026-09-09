@@ -32,6 +32,7 @@ const AdminRecipeFormPage = lazy(() => import('./components/admin/recipes/AdminR
 const AdminGalleryPage = lazy(() => import('./components/admin/gallery/AdminGalleryPage.tsx'))
 const AdminProductsPage = lazy(() => import('./components/admin/products/AdminProductsPage.tsx'))
 const AdminMeetingPointsPage = lazy(() => import('./components/admin/meetingPoints/AdminMeetingPointsPage.tsx'))
+const AdminDistributionsPage = lazy(() => import('./components/admin/distributions/AdminDistributionsPage.tsx'))
 const AdminUsersPage = lazy(() => import('./components/admin/users/AdminUsersPage.tsx'))
 
 const router = createBrowserRouter([
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
                     {
                         path: 'points-de-distribution',
                         element: <AdminMeetingPointsPage />,
+                    },
+                    {
+                        path: 'distributions',
+                        element: <AdminDistributionsPage />,
                     },
                     {
                         element: <RequireRole level="admin" />,

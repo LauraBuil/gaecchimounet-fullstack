@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 
+import { fetchAllDistributionDates } from "../../api/distributions";
 import { fetchAllGalleryImages } from "../../api/gallery";
 import { fetchAllMeetingPoints } from "../../api/meetingPoints";
 import { fetchAllProducts } from "../../api/products";
@@ -14,6 +15,7 @@ type Counts = {
     gallery: { total: number; drafts: number };
     products: { total: number; drafts: number };
     meetingPoints: { total: number; drafts: number };
+    distributions: { total: number; drafts: number };
 };
 
 function summarize<T extends { isPublished: boolean }>(items: T[]) {
@@ -26,11 +28,12 @@ function summarize<T extends { isPublished: boolean }>(items: T[]) {
 async function loadCounts(): Promise<Counts> {
     // Les quatre lectures sont indépendantes : en parallèle, le tableau de bord
     // s'affiche au temps de la plus lente et non de leur somme.
-    const [recipes, gallery, products, meetingPoints] = await Promise.all([
+    const [recipes, gallery, products, meetingPoints, distributions] = await Promise.all([
         fetchAllRecipes(),
         fetchAllGalleryImages(),
         fetchAllProducts(),
         fetchAllMeetingPoints(),
+        fetchAllDistributionDates(),
     ]);
 
     return {
@@ -38,6 +41,7 @@ async function loadCounts(): Promise<Counts> {
         gallery: summarize(gallery),
         products: summarize(products),
         meetingPoints: summarize(meetingPoints),
+        distributions: summarize(distributions),
     };
 }
 
@@ -74,6 +78,12 @@ export default function AdminDashboard() {
             label: "Points de distribution",
             counts: data?.meetingPoints,
             unit: ["point", "points"],
+        },
+        {
+            to: "/admin/distributions",
+            label: "Calendrier des distributions",
+            counts: data?.distributions,
+            unit: ["date", "dates"],
         },
     ];
 

@@ -733,6 +733,7 @@
   input[type='email'],
   input[type='password'],
   input[type='number'],
+  input[type='date'],
   input[type='search'],
   select,
   textarea {
@@ -802,6 +803,134 @@
   display: flex;
   flex-wrap: wrap;
   gap: 18px;
+}
+
+// ===========================================================================
+// Calendrier des distributions
+// ===========================================================================
+
+.admin-calendar {
+  @include mixins.card;
+  margin-bottom: 32px;
+  padding: 22px;
+
+  @include mixins.mobile {
+    padding: 14px;
+  }
+
+  &__header {
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    h2 {
+      color: variables.$green-900;
+      font-family: variables.$font-heading;
+      font-size: 1.45rem;
+      text-align: center;
+      text-transform: capitalize;
+    }
+
+    .admin-button {
+      width: 44px;
+      min-height: 40px;
+      padding-inline: 0;
+      font-size: 1.15rem;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  &__weekday {
+    padding-block: 6px;
+    color: variables.$text-muted;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  &__day {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(variables.$green-900, 0.1);
+    border-radius: variables.$radius-small;
+    background: variables.$white;
+    color: variables.$text-color;
+    font-size: 0.86rem;
+    transition: border-color 150ms ease, background-color 150ms ease;
+
+    &:hover:not(:disabled) {
+      border-color: variables.$green-700;
+      background: variables.$green-100;
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.38;
+    }
+
+    &--outside {
+      color: rgba(variables.$text-muted, 0.55);
+      background: rgba(variables.$cream-200, 0.45);
+    }
+
+    &--today {
+      border-color: variables.$green-700;
+      font-weight: 800;
+    }
+
+    &--scheduled {
+      background: variables.$green-800;
+      border-color: variables.$green-800;
+      color: variables.$white;
+      font-weight: 800;
+
+      &:hover:not(:disabled) {
+        background: variables.$green-900;
+      }
+    }
+
+    &--draft {
+      background: variables.$earth-500;
+      border-color: variables.$earth-500;
+    }
+
+    i {
+      position: absolute;
+      bottom: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+  }
+
+  &__hint {
+    margin: 14px 0 0;
+    color: variables.$text-muted;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+}
+
+.admin-distributions {
+  > h2 {
+    margin-bottom: 14px;
+    color: variables.$green-900;
+    font-family: variables.$font-heading;
+    font-size: 1.5rem;
+  }
 }
 
 // ===========================================================================
