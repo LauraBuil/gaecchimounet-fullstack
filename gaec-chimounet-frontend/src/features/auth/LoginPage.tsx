@@ -70,8 +70,6 @@ export default function LoginPage() {
     return (
         <div className="auth-page">
             <div className="auth-card">
-                <p className="eyebrow eyebrow--dark">Espace de gestion</p>
-
                 <h1 className="auth-card__title">Connexion</h1>
 
                 <p className="auth-card__description">
