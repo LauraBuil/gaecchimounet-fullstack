@@ -1,0 +1,118 @@
+@use "./abstracts/variables";
+@use "./abstracts/functions";
+@use "./abstracts/mixins";
+
+@use "./common/page-hero";
+@use "./common/header";
+@use "./common/footer";
+@use "./common/legalMentions";
+@use "./common/section-state";
+
+@use "./components/button";
+@use "./components/hero";
+@use "./components/product-card";
+@use "./components/products";
+@use "./components/recipe-card";
+@use "./components/recipes-section";
+
+@use "./components/order/order";
+
+@use "pages/home";
+@use "pages/contact";
+@use "pages/gallery";
+@use "pages/recipes";
+@use "pages/recipe-detail";
+@use "pages/products-page";
+@use "pages/admin";
+
+@use "./adds/circleCommands";
+
+//mobile FIRST
+
+* {
+  font-family: variables.$font-body;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 280px;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+body {
+  background: variables.$cream-100;
+  color: variables.$text-color;
+  font-family: variables.$font-body;
+  line-height: 1.5;
+}
+
+.container {
+  @include mixins.container;
+}
+
+.section {
+  padding-block: 100px;
+
+  @include mixins.mobile {
+    padding-block: 72px;
+  }
+
+  h2 {
+    @include mixins.section-title;
+    margin-bottom: 0;
+  }
+}
+
+.eyebrow {
+  margin-bottom: 16px;
+  color: variables.$green-100;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  &--dark {
+    color: variables.$green-700;
+  }
+}

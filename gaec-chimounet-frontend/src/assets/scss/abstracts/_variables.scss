@@ -1,0 +1,46 @@
+// Colors
+$green-900: #203f2e;
+$green-800: #315a3f;
+$green-700: #477554;
+$green-200: #dce8d8;
+$green-100: #edf3e9;
+
+$cream-100: #faf7ef;
+$cream-200: #f3ecdf;
+
+$white: #ffffff;
+$earth-500: #a26d43;
+
+$text-color: #26352b;
+$text-muted: #657168;
+
+// Font
+@font-face {
+  font-family: 'josefin';
+  src: url('../../fonts/JosefinSans-VariableFont_wght.ttf') format('truetype')
+}
+
+@font-face {
+  font-family: 'didot_regular';
+  src: url('../../fonts/didot_regular.ttf') format('truetype')
+}
+
+$font-heading: 'didot_regular', sans-serif;
+$font-body: 'josefin', sans-serif;
+
+// Dimensions
+$container-width: 1180px;
+$header-height: 78px;
+
+// Borders
+$radius-small: 0.625rem;
+$radius-medium: 1.125rem;
+$radius-large: 1.875rem;
+$radius-pill: 62.438rem;
+
+// Shadows
+$shadow-card: 0 16px 42px rgba($green-900, 0.1);
+
+// Breakpoints
+$breakpoint-tablet: 980px;
+$breakpoint-mobile: 720px;

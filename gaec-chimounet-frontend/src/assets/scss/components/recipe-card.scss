@@ -1,0 +1,85 @@
+@use "../abstracts/variables" as variables;
+
+.recipe-card {
+  overflow: hidden;
+
+  background: variables.$white;
+  border-radius: variables.$radius-medium;
+  box-shadow: variables.$shadow-card;
+
+  &__image-link {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 450ms ease;
+  }
+
+  &:hover &__image {
+    transform: scale(1.045);
+  }
+
+  &__content {
+    padding: 1.6rem;
+  }
+
+  &__metadata {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    margin-bottom: 0.75rem;
+
+    color: variables.$text-muted;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__title {
+    min-height: 3.5rem;
+    margin-bottom: 1.25rem;
+
+    color: variables.$green-900;
+    font-family: variables.$font-heading;
+    font-size: 1.45rem;
+    line-height: 1.2;
+
+    a {
+      color: inherit;
+      transition: color 160ms ease;
+    }
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    color: variables.$green-700;
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+  &:hover &__title a,
+  &:focus-within &__title a {
+    color: variables.$green-700;
+  }
+
+  &:hover &__link,
+  &:focus-within &__link {
+    color: variables.$green-900;
+  }
+
+  &:hover &__link span,
+  &:focus-within &__link span {
+    transform: translateX(0.25rem);
+  }
+}

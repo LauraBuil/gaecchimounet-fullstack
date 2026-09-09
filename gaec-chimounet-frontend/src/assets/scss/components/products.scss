@@ -1,0 +1,54 @@
+@use "../abstracts/variables" as variables;
+@use "../abstracts/mixins" as mixins;
+
+.products-section {
+  background: variables.$cream-200;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.4rem;
+
+    @include mixins.tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include mixins.mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.section-heading {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(18rem, 28rem);
+
+  align-items: center;
+  gap: 3rem;
+
+  margin-bottom: 3rem;
+
+  &__aside {
+    p {
+      margin-bottom: 1rem;
+      color: variables.$text-muted;
+      line-height: 1.7;
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      color: variables.$green-700;
+      font-weight: 800;
+    }
+  }
+
+  @include mixins.mobile {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}

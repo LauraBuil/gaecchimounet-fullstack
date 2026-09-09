@@ -1,0 +1,40 @@
+@use '../abstracts/variables' as variables;
+
+.button {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 24px;
+
+  border-radius: variables.$radius-pill;
+
+  font-weight: 700;
+
+  transition:
+          transform 180ms ease,
+          background-color 180ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(variables.$green-700, 0.4);
+    outline-offset: 3px;
+  }
+
+  &--primary {
+    background: variables.$green-800;
+    color: variables.$white;
+
+    &:hover {
+      background: variables.$green-900;
+    }
+  }
+
+  &--light {
+    background: rgba(variables.$white, 0.92);
+    color: variables.$green-900;
+  }
+}

@@ -1,0 +1,319 @@
+@use '../abstracts/variables' as variables;
+@use '../abstracts/mixins' as mixins;
+
+.header {
+  position: sticky;
+  z-index: 100;
+  top: 0;
+
+  min-height: variables.$header-height;
+
+  background: rgba(variables.$cream-100, 0.94);
+  border-bottom: 1px solid rgba(variables.$green-900, 0.08);
+  backdrop-filter: blur(16px);
+
+  &__inner {
+    min-height: variables.$header-height;
+
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-right: auto;
+
+    color: variables.$green-900;
+  }
+
+  &__logo-image {
+    width: 3.25rem;
+    height: 3.25rem;
+    object-fit: contain;
+  }
+
+  &__logo-text {
+    font-family: variables.$font-heading;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.04rem;
+  }
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+
+  &__link {
+    position: relative;
+
+    padding: 0.5rem 0;
+
+    background: transparent;
+    color: variables.$text-muted;
+    border: 0;
+
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: color 160ms ease;
+
+    &::after {
+      content: "";
+
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      height: 0.125rem;
+
+      background: variables.$green-700;
+      border-radius: variables.$radius-pill;
+
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 180ms ease;
+    }
+
+    &:hover {
+      color: variables.$green-900;
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba(variables.$green-700, 0.3);
+      outline-offset: 0.25rem;
+      border-radius: 0.25rem;
+    }
+
+    &:hover::after,
+    &--active::after {
+      transform: scaleX(1);
+    }
+
+    &--active {
+      color: variables.$green-900;
+    }
+  }
+
+  &__admin-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.7rem 1.1rem;
+
+    background: variables.$green-900;
+    color: variables.$cream-100;
+    border-radius: variables.$radius-pill;
+
+    &::after {
+      display: none;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: variables.$green-700;
+      color: variables.$white;
+    }
+  }
+}
+
+.menu-button {
+  display: none;
+
+  width: 2.75rem;
+  height: 2.75rem;
+
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.32rem;
+
+  padding: 0;
+
+  background: transparent;
+  color: variables.$green-900;
+  border: 0;
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  &__line {
+    width: 1.5rem;
+    height: 0.125rem;
+
+    background: currentColor;
+    border-radius: variables.$radius-pill;
+
+    transition:
+            transform 200ms ease,
+            opacity 200ms ease;
+  }
+
+  &[aria-expanded="true"] {
+    .menu-button__line {
+      &:nth-child(1) {
+        transform: translateY(0.45rem) rotate(45deg);
+      }
+
+      &:nth-child(2) {
+        opacity: 0;
+      }
+
+      &:nth-child(3) {
+        transform: translateY(-0.45rem) rotate(-45deg);
+      }
+    }
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(variables.$green-700, 0.3);
+    outline-offset: 0.2rem;
+  }
+}
+
+@include mixins.tablet {
+  .header {
+    &__inner {
+      gap: 1rem;
+    }
+  }
+
+  .menu-button {
+    display: inline-flex;
+    position: relative;
+    z-index: 102;
+  }
+
+  .nav {
+    position: fixed;
+    z-index: 101;
+    inset: variables.$header-height 0 auto 0;
+
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    max-height: calc(100dvh - #{variables.$header-height});
+    padding: 1rem 1.25rem 1.5rem;
+
+    overflow-y: auto;
+
+    background: variables.$cream-100;
+    border-bottom: 1px solid rgba(variables.$green-900, 0.08);
+    box-shadow: 0 1.5rem 2.5rem rgba(variables.$green-900, 0.12);
+
+    &--open {
+      display: flex;
+      animation: menu-open 220ms ease forwards;
+    }
+
+    &--closing {
+      display: flex;
+      animation: menu-close 180ms ease forwards;
+      pointer-events: none;
+    }
+
+    &__link {
+      width: 100%;
+      padding: 1rem 0.5rem;
+
+      color: variables.$green-900;
+      text-align: left;
+
+      border-bottom: 1px solid rgba(variables.$green-900, 0.08);
+
+      transition:
+              color 160ms ease,
+              background-color 160ms ease,
+              padding-left 160ms ease;
+
+      &::after {
+        display: none;
+      }
+
+      &:hover {
+        color: variables.$green-700;
+        background: variables.$green-100;
+        padding-left: 1rem;
+      }
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      &--active {
+        color: variables.$green-700;
+      }
+    }
+
+    &__admin-link {
+      margin-top: 0.75rem;
+      padding: 0.9rem 1rem;
+
+      color: variables.$cream-100;
+      text-align: center;
+      border-bottom: 0;
+
+      &:hover {
+        padding-left: 1rem;
+        color: variables.$white;
+        background: variables.$green-700;
+      }
+    }
+  }
+}
+
+@include mixins.mobile {
+  .header {
+    &__logo-image {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    &__logo-text {
+      font-size: 1.05rem;
+    }
+  }
+}
+
+@keyframes menu-open {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menu-close {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .menu-button__line,
+  .nav__link::after {
+    animation: none;
+    transition: none;
+  }
+}
