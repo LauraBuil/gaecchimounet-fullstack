@@ -79,9 +79,10 @@
     color: rgba(variables.$white, 0.5);
     font-size: 0.82rem;
 
-    div {
+    .footer__links {
       display: flex;
-      gap: 1.5rem;
+      align-items: center;
+      gap: 0.65rem;
     }
 
     a:hover {
@@ -115,9 +116,14 @@
       flex-direction: column;
       align-items: flex-start;
 
-      div {
+      .footer__links {
         flex-direction: column;
+        align-items: flex-start;
         gap: 0.6rem;
+
+        span {
+          display: none;
+        }
       }
     }
   }

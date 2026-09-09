@@ -49,13 +49,15 @@ export default function Footer() {
           © {new Date().getFullYear()} GAEC Chimounet - App web conçue et développée par Laura Buil
         </span>
 
-                <div>
+                <nav className="footer__links" aria-label="Liens secondaires">
                     <Link to="/mentions-legales">Mentions légales</Link>
-                    {" · "}
+                    <span aria-hidden="true">·</span>
                     <Link to="/politique-de-confidentialite">
                         Politique de confidentialité
                     </Link>
-                </div>
+                    <span aria-hidden="true">·</span>
+                    <Link to="/admin">Administration</Link>
+                </nav>
             </div>
         </footer>
     );
