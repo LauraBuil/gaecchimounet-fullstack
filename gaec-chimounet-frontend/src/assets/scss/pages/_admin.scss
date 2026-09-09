@@ -1,0 +1,1133 @@
+@use '../abstracts/variables' as variables;
+@use '../abstracts/mixins' as mixins;
+
+// ===========================================================================
+// Utilitaires
+// ===========================================================================
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ===========================================================================
+// Écrans pleine page : connexion, mot de passe, chargement, accès refusé
+// ===========================================================================
+
+.admin-splash {
+  display: flex;
+  min-height: 60vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 24px;
+  text-align: center;
+
+  h1 {
+    @include mixins.section-title;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+  }
+
+  p {
+    max-width: 46ch;
+    color: variables.$text-muted;
+  }
+}
+
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(
+          160deg,
+          variables.$green-100 0%,
+          variables.$cream-100 60%
+  );
+}
+
+.auth-card {
+  @include mixins.card;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  text-align: center;
+
+  @include mixins.mobile {
+    padding: 28px 22px;
+  }
+
+  &__title {
+    @include mixins.section-title;
+    margin-bottom: 8px;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+  }
+
+  &__description {
+    margin-bottom: 28px;
+    color: variables.$text-muted;
+  }
+
+  &__link {
+    margin-top: 20px;
+    padding: 4px;
+    background: none;
+    color: variables.$green-700;
+    font-size: 0.9rem;
+    text-decoration: underline;
+
+    &:hover {
+      color: variables.$green-900;
+    }
+  }
+
+  &__back {
+    display: block;
+    margin-top: 24px;
+    color: variables.$text-muted;
+    font-size: 0.85rem;
+
+    &:hover {
+      color: variables.$green-700;
+    }
+  }
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: left;
+
+  .button {
+    width: 100%;
+    margin-top: 4px;
+  }
+}
+
+// ===========================================================================
+// Ossature du back-office
+// ===========================================================================
+
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: variables.$cream-100;
+}
+
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(variables.$green-900, 0.08);
+  background: variables.$white;
+
+  @include mixins.mobile {
+    padding: 10px 16px;
+  }
+
+  &__toggle {
+    display: none;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 14px 0;
+    border-radius: variables.$radius-pill;
+    background: variables.$green-100;
+    color: variables.$green-900;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+
+    @include mixins.tablet {
+      display: inline-flex;
+    }
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: variables.$green-900;
+    font-family: variables.$font-heading;
+    font-size: 1.25rem;
+    line-height: 1.1;
+
+    img {
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    span {
+      white-space: nowrap;
+
+      @include mixins.mobile {
+        display: none;
+      }
+    }
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+
+    @include mixins.mobile {
+      gap: 8px;
+    }
+  }
+
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    // Sur mobile la barre est déjà dense : le nom passe à la trappe,
+    // le rôle reste visible car c'est lui qui porte l'information utile.
+    @include mixins.mobile {
+      font-size: 0;
+      gap: 0;
+    }
+  }
+
+  &__site-link {
+    color: variables.$green-700;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: underline;
+
+    @include mixins.mobile {
+      display: none;
+    }
+  }
+}
+
+.admin-body {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.admin-nav {
+  position: sticky;
+  top: 78px;
+  width: 250px;
+  flex-shrink: 0;
+  padding: 24px 16px;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    list-style: none;
+  }
+
+  &__link {
+    display: flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2px 16px 0;
+    border-radius: variables.$radius-small;
+    color: variables.$text-color;
+    font-size: 0.94rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: left;
+    transition: background-color 160ms ease, color 160ms ease;
+
+    &:hover {
+      background: rgba(variables.$green-200, 0.55);
+    }
+
+    &--active {
+      background: variables.$green-800;
+      color: variables.$white;
+
+      &:hover {
+        background: variables.$green-900;
+      }
+    }
+  }
+
+  // Sous tablette le menu se replie et se déploie par-dessus le contenu.
+  @include mixins.tablet {
+    position: fixed;
+    top: 62px;
+    bottom: 0;
+    left: 0;
+    z-index: 15;
+    width: 260px;
+    background: variables.$white;
+    box-shadow: variables.$shadow-card;
+    transform: translateX(-100%);
+    transition: transform 220ms ease;
+
+    &--open {
+      transform: translateX(0);
+    }
+  }
+}
+
+.admin-main {
+  flex: 1;
+  min-width: 0; // sans cela un tableau large étire toute la mise en page
+  padding: 28px 32px 80px;
+
+  @include mixins.mobile {
+    padding: 20px 16px 60px;
+  }
+}
+
+.admin-page {
+  max-width: 960px;
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+
+    h1 {
+      @include mixins.section-title;
+      font-size: clamp(1.9rem, 4vw, 2.6rem);
+      margin-bottom: 6px;
+    }
+  }
+
+  &__description {
+    color: variables.$text-muted;
+    font-size: 0.95rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+.admin-back {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: variables.$green-700;
+  font-size: 0.88rem;
+  font-weight: 600;
+
+  &:hover {
+    color: variables.$green-900;
+  }
+}
+
+// ===========================================================================
+// Boutons et pastilles
+// ===========================================================================
+
+.admin-shell .button,
+.auth-page .button {
+  padding-top: 2px;
+  line-height: 1;
+}
+
+.admin-button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 16px 0;
+  border-radius: variables.$radius-pill;
+  background: variables.$green-800;
+  color: variables.$white;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  transition: background-color 160ms ease, opacity 160ms ease;
+
+  &:hover {
+    background: variables.$green-900;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  &--ghost {
+    background: transparent;
+    border: 1px solid rgba(variables.$green-900, 0.18);
+    color: variables.$green-900;
+
+    &:hover {
+      background: variables.$green-100;
+    }
+  }
+
+  &--danger {
+    background: transparent;
+    border: 1px solid rgba(variables.$earth-500, 0.4);
+    color: variables.$earth-500;
+
+    &:hover {
+      background: rgba(variables.$earth-500, 0.08);
+    }
+  }
+
+  // État « armé » : franchement rouge, pour qu'un second clic ne parte pas par
+  // distraction.
+  &--danger-armed {
+    background: #b3261e;
+    color: variables.$white;
+
+    &:hover {
+      background: #8c1d18;
+    }
+  }
+}
+
+.admin-icon-button {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: variables.$radius-small;
+  background: variables.$green-100;
+  color: variables.$green-900;
+  font-size: 0.95rem;
+  line-height: 1;
+
+  &:hover {
+    background: variables.$green-200;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+  }
+
+  &--danger {
+    background: rgba(variables.$earth-500, 0.1);
+    color: variables.$earth-500;
+
+    &:hover {
+      background: rgba(variables.$earth-500, 0.2);
+    }
+  }
+}
+
+.admin-badge {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px 0;
+  border-radius: variables.$radius-pill;
+  background: variables.$green-200;
+  color: variables.$green-900;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &--draft {
+    background: rgba(variables.$earth-500, 0.15);
+    color: variables.$earth-500;
+  }
+}
+
+// ===========================================================================
+// Messages
+// ===========================================================================
+
+.admin-alert {
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  border-radius: variables.$radius-small;
+  font-size: 0.9rem;
+  // Les messages d'erreur groupés (envoi de photos) contiennent des sauts de
+  // ligne : sans cela ils s'afficheraient sur une seule ligne illisible.
+  white-space: pre-line;
+
+  &--error {
+    background: rgba(#b3261e, 0.08);
+    color: #8c1d18;
+  }
+
+  &--success {
+    background: rgba(variables.$green-700, 0.12);
+    color: variables.$green-900;
+  }
+
+  &--info {
+    background: rgba(variables.$green-200, 0.5);
+    color: variables.$green-900;
+  }
+
+  button {
+    margin-top: 10px;
+  }
+}
+
+.admin-state {
+  padding: 40px 24px;
+  border-radius: variables.$radius-medium;
+  background: rgba(variables.$green-100, 0.55);
+  color: variables.$text-muted;
+  text-align: center;
+}
+
+.admin-hint {
+  margin-top: 20px;
+  color: variables.$text-muted;
+  font-size: 0.85rem;
+}
+
+// ===========================================================================
+// Tableau de bord
+// ===========================================================================
+
+.admin-cards {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin-bottom: 36px;
+}
+
+.admin-card {
+  @include mixins.card;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 22px;
+  transition: transform 180ms ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  &__label {
+    color: variables.$text-muted;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__value {
+    color: variables.$green-900;
+    font-family: variables.$font-heading;
+    font-size: 2.6rem;
+    line-height: 1;
+  }
+
+  &__unit {
+    color: variables.$text-muted;
+    font-size: 0.86rem;
+
+    em {
+      color: variables.$earth-500;
+      font-style: normal;
+    }
+  }
+}
+
+.admin-help {
+  @include mixins.card;
+  padding: 24px 28px;
+
+  h2 {
+    margin-bottom: 12px;
+    color: variables.$green-900;
+    font-family: variables.$font-heading;
+    font-size: 1.4rem;
+  }
+
+  ul {
+    padding-left: 20px;
+    color: variables.$text-muted;
+    font-size: 0.92rem;
+
+    li + li {
+      margin-top: 8px;
+    }
+  }
+
+  strong {
+    color: variables.$text-color;
+  }
+}
+
+// ===========================================================================
+// Listes de contenu
+// ===========================================================================
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  list-style: none;
+
+  &__item {
+    @include mixins.card;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 16px 20px;
+
+    @include mixins.mobile {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &__thumbnail {
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+    border-radius: variables.$radius-small;
+    object-fit: cover;
+
+    @include mixins.mobile {
+      width: 100%;
+      height: 160px;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    color: variables.$green-900;
+    font-family: variables.$font-heading;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  &__meta {
+    margin-bottom: 4px;
+    color: variables.$text-muted;
+    font-size: 0.82rem;
+  }
+
+  &__summary {
+    color: variables.$text-color;
+    font-size: 0.9rem;
+    // Un résumé long ne doit pas faire exploser la hauteur de la ligne.
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__actions {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+// ===========================================================================
+// Formulaires
+// ===========================================================================
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+
+  &--inline {
+    @include mixins.card;
+    margin-bottom: 28px;
+    padding: 24px 26px;
+
+    h2 {
+      color: variables.$green-900;
+      font-family: variables.$font-heading;
+      font-size: 1.5rem;
+    }
+  }
+
+  &__description {
+    margin-top: -12px;
+    color: variables.$text-muted;
+    font-size: 0.88rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+}
+
+.admin-fieldset {
+  @include mixins.card;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px 26px;
+  border: 0;
+
+  @include mixins.mobile {
+    padding: 18px 16px;
+  }
+
+  legend {
+    padding-inline: 8px;
+    color: variables.$green-700;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+}
+
+.admin-field {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  border: 0;
+
+  > label,
+  > legend {
+    color: variables.$text-color;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='number'],
+  input[type='search'],
+  select,
+  textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid rgba(variables.$green-900, 0.16);
+    border-radius: variables.$radius-small;
+    background: variables.$white;
+    color: variables.$text-color;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+
+    &:focus {
+      border-color: variables.$green-700;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(variables.$green-700, 0.16);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  &__hint {
+    color: variables.$text-muted;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+}
+
+.admin-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+
+  @include mixins.mobile {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.admin-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-top: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: variables.$green-800;
+  }
+
+  em {
+    display: block;
+    color: variables.$text-muted;
+    font-size: 0.78rem;
+    font-style: normal;
+  }
+}
+
+.admin-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+// ===========================================================================
+// Listes répétables : ingrédients et étapes
+// ===========================================================================
+
+.admin-repeater {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+
+  &__row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    input,
+    textarea {
+      padding: 10px 12px;
+      border: 1px solid rgba(variables.$green-900, 0.16);
+      border-radius: variables.$radius-small;
+      background: variables.$white;
+
+      &:focus {
+        border-color: variables.$green-700;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(variables.$green-700, 0.16);
+      }
+    }
+
+    textarea {
+      flex: 1;
+      resize: vertical;
+    }
+
+    @include mixins.mobile {
+      flex-wrap: wrap;
+    }
+  }
+
+  &__quantity {
+    width: 130px;
+    flex-shrink: 0;
+
+    @include mixins.mobile {
+      width: 100%;
+    }
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+
+    @include mixins.mobile {
+      width: 100%;
+    }
+  }
+
+  &__number {
+    display: flex;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: variables.$green-100;
+    color: variables.$green-800;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  &__actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 5px;
+  }
+}
+
+// ===========================================================================
+// Champ image
+// ===========================================================================
+
+.image-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+
+  @include mixins.mobile {
+    flex-direction: column;
+  }
+
+  &__preview {
+    width: 140px;
+    height: 105px;
+    flex-shrink: 0;
+    border-radius: variables.$radius-small;
+    object-fit: cover;
+    background: variables.$cream-200;
+  }
+
+  &__controls {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    input[type='file'] {
+      max-width: 100%;
+      font-size: 0.85rem;
+    }
+  }
+
+  &__status {
+    color: variables.$green-700;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+}
+
+// ===========================================================================
+// Galerie
+// ===========================================================================
+
+.admin-gallery {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  list-style: none;
+
+  &__item {
+    @include mixins.card;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &--draft {
+      opacity: 0.55;
+    }
+  }
+
+  &__image {
+    width: 100%;
+    height: 165px;
+    object-fit: cover;
+    background: variables.$cream-200;
+  }
+
+  &__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  &__alt {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    span {
+      color: variables.$text-muted;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px 11px;
+      border: 1px solid rgba(variables.$green-900, 0.16);
+      border-radius: variables.$radius-small;
+      font-size: 0.86rem;
+
+      &:focus {
+        border-color: variables.$green-700;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(variables.$green-700, 0.16);
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+  }
+}
+
+// Barre d'enregistrement de l'ordre : elle colle en bas de l'écran pour rester
+// atteignable même après avoir déplacé une photo tout en bas de la liste.
+.admin-sticky-bar {
+  position: sticky;
+  bottom: 16px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 14px 20px;
+  border-radius: variables.$radius-medium;
+  background: variables.$green-900;
+  color: variables.$white;
+  box-shadow: variables.$shadow-card;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .admin-button--ghost {
+    border-color: rgba(variables.$white, 0.45);
+    color: variables.$white;
+
+    &:hover {
+      background: rgba(variables.$white, 0.14);
+    }
+  }
+}
+
+// ===========================================================================
+// Utilisateurs
+// ===========================================================================
+
+.admin-roles {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-bottom: 28px;
+
+  &__card {
+    padding: 18px 20px;
+    border-radius: variables.$radius-medium;
+    background: rgba(variables.$green-100, 0.7);
+
+    h2 {
+      margin-bottom: 6px;
+      color: variables.$green-900;
+      font-family: variables.$font-heading;
+      font-size: 1.2rem;
+    }
+
+    p {
+      margin: 0;
+      color: variables.$text-muted;
+      font-size: 0.86rem;
+    }
+  }
+}
+
+.admin-table-wrapper {
+  @include mixins.card;
+  // Un tableau ne se réduit pas indéfiniment : on le fait défiler à l'intérieur
+  // de son cadre plutôt que d'imposer un défilement horizontal à toute la page.
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+
+  th,
+  td {
+    padding: 14px 18px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  thead th {
+    border-bottom: 1px solid rgba(variables.$green-900, 0.1);
+    color: variables.$text-muted;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tbody tr + tr {
+    border-top: 1px solid rgba(variables.$green-900, 0.07);
+  }
+
+  strong {
+    display: block;
+    color: variables.$green-900;
+  }
+
+  select {
+    padding: 7px 11px;
+    border: 1px solid rgba(variables.$green-900, 0.16);
+    border-radius: variables.$radius-small;
+    background: variables.$white;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+  }
+
+  &__sub {
+    display: block;
+    margin-top: 3px;
+    color: variables.$text-muted;
+    font-size: 0.78rem;
+  }
+
+  &__actions {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .admin-badge {
+    margin-top: 5px;
+  }
+}

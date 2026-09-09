@@ -1,0 +1,124 @@
+@use "../abstracts/variables" as variables;
+@use "../abstracts/mixins" as mixins;
+
+.footer {
+  padding-block: 5rem 2rem;
+
+  background: variables.$green-900;
+  color: variables.$white;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: clamp(2.5rem, 7vw, 6rem);
+
+    padding-bottom: 4rem;
+  }
+
+  &__brand {
+    max-width: 25rem;
+
+    p {
+      color: rgba(variables.$white, 0.68);
+      line-height: 1.7;
+    }
+  }
+
+  &__brand-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    margin-bottom: 1.25rem;
+
+    img {
+      width: 3rem;
+      height: 3rem;
+      object-fit: contain;
+    }
+
+    strong {
+      font-family: variables.$font-heading;
+      font-size: 1.4rem;
+    }
+  }
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    strong {
+      margin-bottom: 0.5rem;
+      font-family: variables.$font-heading;
+      font-size: 1.15rem;
+    }
+
+    a,
+    address {
+      color: rgba(variables.$white, 0.68);
+      font-style: normal;
+    }
+
+    a:hover {
+      color: variables.$white;
+    }
+  }
+
+  &__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+
+    padding-top: 2rem;
+
+    border-top: 1px solid rgba(variables.$white, 0.12);
+
+    color: rgba(variables.$white, 0.5);
+    font-size: 0.82rem;
+
+    div {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    a:hover {
+      color: variables.$white;
+    }
+  }
+
+  @include mixins.tablet {
+    &__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &__brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @include mixins.mobile {
+    padding-top: 4rem;
+
+    &__grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    &__brand {
+      grid-column: auto;
+    }
+
+    &__bottom {
+      flex-direction: column;
+      align-items: flex-start;
+
+      div {
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+    }
+  }
+}

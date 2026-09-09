@@ -1,0 +1,34 @@
+[
+    {
+        "name": "Petits pois",
+        "slug": "petits-pois",
+        "subtitle": "Sucrés et fondants",
+        "filename": "DSC045421.webp",
+        "imageAlt": "Petits pois biologiques fraîchement récoltés",
+        "seasons": ["autumn"]
+    },
+    {
+        "name": "Carottes",
+        "slug": "carottes",
+        "subtitle": "Fermes et savoureuses",
+        "filename": "carottes.webp",
+        "imageAlt": "Carottes biologiques cultivées au GAEC Chimounet",
+        "seasons": ["winter", "autumn"]
+    },
+    {
+        "name": "Salades",
+        "slug": "salades",
+        "subtitle": "Croquantes et fraîches",
+        "filename": "salade.webp",
+        "imageAlt": "Salades biologiques cultivées en pleine terre",
+        "seasons": ["spring", "summer"]
+    },
+    {
+        "name": "Tomates rondes",
+        "slug": "tomates-rondes",
+        "subtitle": "Gorgées de soleil",
+        "filename": "230804tomateronde.webp",
+        "imageAlt": "Tomates rondes biologiques",
+        "seasons": ["summer", "autumn"]
+    }
+]

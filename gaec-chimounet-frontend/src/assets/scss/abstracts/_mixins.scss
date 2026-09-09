@@ -1,0 +1,38 @@
+@use './variables' as variables;
+
+@mixin tablet {
+  @media (max-width: variables.$breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: variables.$breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin container {
+  width: calc(100% - 2.5rem);
+  max-width: variables.$container-width;
+  margin-inline: auto;
+
+  @include mobile {
+    width: calc(100% - 1.75rem);
+  }
+}
+
+@mixin card {
+  background: variables.$white;
+  border-radius: variables.$radius-medium;
+  box-shadow: variables.$shadow-card;
+}
+
+@mixin section-title {
+  color: variables.$green-900;
+  font-family: variables.$font-heading;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
