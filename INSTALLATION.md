@@ -66,3 +66,22 @@ npm run dev
 Contrôler les pages publiques, puis la connexion à `/admin/connexion`, la création
 et la modification de chaque contenu, l'envoi d'images, l'invitation d'un
 exploitant et la récupération du mot de passe.
+
+## 5. Publier manuellement sur Hostinger
+
+Créer un site indépendant pour `staging.gaecchimounet.fr` avec l'option
+**Site web PHP/HTML personnalisé**. Construire ensuite le frontend :
+
+```powershell
+cd gaec-chimounet-frontend
+npm ci
+npm run build
+```
+
+Importer le **contenu du dossier `dist`** dans le dossier `public_html` du site
+de staging. Le fichier `.htaccess` inclus dans le build renvoie les routes
+React telles que `/admin` et `/recettes/...` vers `index.html`.
+
+Une fois le sous-domaine accessible, ajouter son URL dans **Supabase >
+Authentication** et remplacer le secret `SITE_URL` de la fonction
+`manage-users` par l'adresse du staging pendant les tests des invitations.
