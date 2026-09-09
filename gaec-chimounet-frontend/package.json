@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:staging": "npm run build && node scripts/prepare-staging.mjs",
     "preview": "vite preview",
     "seed:supabase": "node scripts/seed-supabase.mjs",
     "seed:supabase:login": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/seed-supabase-login.ps1",
