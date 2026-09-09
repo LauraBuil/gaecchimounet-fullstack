@@ -20,6 +20,7 @@ import ConfirmButton from "../shared/ConfirmButton";
 const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const EMPTY_DATE: DistributionDateInput = {
     date: localDateKey(),
+    location: "",
     isPublished: true,
 };
 
@@ -60,7 +61,7 @@ export default function AdminDistributionsPage() {
     const isFormOpen = isCreating || editingId !== null;
 
     const startCreate = (date = today) => {
-        setForm({ date, isPublished: true });
+        setForm({ date, location: "", isPublished: true });
         setEditingId(null);
         setIsCreating(true);
         setFormError(null);
@@ -71,6 +72,7 @@ export default function AdminDistributionsPage() {
         setMonth(new Date(selected.getFullYear(), selected.getMonth(), 1));
         setForm({
             date: distribution.date,
+            location: distribution.location,
             isPublished: distribution.isPublished,
         });
         setEditingId(distribution.id);
@@ -207,6 +209,25 @@ export default function AdminDistributionsPage() {
                         </label>
                     </div>
 
+                    <div className="admin-field">
+                        <label htmlFor="distribution-location">Lieu</label>
+                        <input
+                            id="distribution-location"
+                            type="text"
+                            placeholder="Marché de Trébons"
+                            value={form.location}
+                            onChange={(event) =>
+                                setForm((current) => ({
+                                    ...current,
+                                    location: event.target.value,
+                                }))
+                            }
+                        />
+                        <p className="admin-field__hint">
+                            Ce lieu sera affiché sous la date sur la page d’accueil.
+                        </p>
+                    </div>
+
                     {formError && (
                         <p className="admin-alert admin-alert--error" role="alert">
                             {formError}
@@ -324,6 +345,11 @@ export default function AdminDistributionsPage() {
                                                 </span>
                                             )}
                                         </h3>
+                                        {distribution.location && (
+                                            <p className="admin-list__summary">
+                                                {distribution.location}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="admin-list__actions">
                                         <button
@@ -335,6 +361,7 @@ export default function AdminDistributionsPage() {
                                         </button>
                                         <ConfirmButton
                                             label="Supprimer"
+                                            confirmLabel="Oui, supprimer"
                                             onConfirm={() => handleDelete(distribution)}
                                         />
                                     </div>

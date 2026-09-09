@@ -64,6 +64,7 @@
 
     color: variables.$text-muted;
   }
+
 }
 
 .distribution-card {
@@ -109,6 +110,12 @@
     font-family: variables.$font-heading;
     font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1;
+  }
+
+  &__location {
+    margin: -0.25rem 0 0.85rem;
+    color: variables.$green-700;
+    font-weight: 700;
   }
 
   &__description {

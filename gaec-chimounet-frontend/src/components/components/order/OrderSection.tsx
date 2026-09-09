@@ -82,6 +82,12 @@ export default function OrderSection() {
                         {dateLabel}
                     </strong>
 
+                    {nextDistribution?.location && (
+                        <p className="distribution-card__location">
+                            {nextDistribution.location}
+                        </p>
+                    )}
+
                     <p className="distribution-card__description">
                         {error
                             ? "La prochaine date n’a pas pu être chargée."
