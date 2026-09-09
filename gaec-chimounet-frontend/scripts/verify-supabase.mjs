@@ -41,12 +41,26 @@ const { data: gallery, error: galleryError } = await visitor
     .eq("is_published", true);
 if (galleryError) throw galleryError;
 
+const { data: distributions, error: distributionsError } = await visitor
+    .from("distribution_dates")
+    .select("distribution_date")
+    .eq("is_published", true)
+    .gte("distribution_date", new Date().toISOString().slice(0, 10));
+if (distributionsError) throw distributionsError;
+
 const { error: forbiddenPublicWrite } = await visitor.from("products").insert({
     name: "Interdit",
     slug: `interdit-${randomUUID()}`,
     seasons: [],
 });
 if (!forbiddenPublicWrite) throw new Error("Une écriture anonyme a été acceptée.");
+
+const { error: forbiddenDistributionWrite } = await visitor
+    .from("distribution_dates")
+    .insert({ distribution_date: "2099-12-31" });
+if (!forbiddenDistributionWrite) {
+    throw new Error("Une date de distribution anonyme a été acceptée.");
+}
 
 if (gallery.length > 0) {
     const { data: publicMedia } = visitor.storage
@@ -60,7 +74,8 @@ if (gallery.length > 0) {
 
 if (!serviceRoleKey) {
     console.log(
-        `Connexion publique réussie : ${products.length} produits, ${gallery.length} photos, médias accessibles et écritures anonymes bloquées.`,
+        `Connexion publique réussie : ${products.length} produits, ${gallery.length} photos, ` +
+            `${distributions.length} distribution(s) à venir, médias accessibles et écritures anonymes bloquées.`,
     );
     process.exit(0);
 }

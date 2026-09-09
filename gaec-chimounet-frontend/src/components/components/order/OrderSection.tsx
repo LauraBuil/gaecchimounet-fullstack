@@ -1,3 +1,9 @@
+import {
+    fetchNextDistributionDate,
+    formatDistributionDate,
+} from "../../../api/distributions";
+import { useAsyncData } from "../../../hooks/useAsyncData";
+
 const orderSteps = [
     {
         number: "01",
@@ -19,21 +25,17 @@ const orderSteps = [
     },
 ];
 
-function nextFridayLabel(today = new Date()): string {
-    const date = new Date(today);
-    const daysUntilFriday = (5 - date.getDay() + 7) % 7;
-    date.setDate(date.getDate() + daysUntilFriday);
-
-    const formatted = new Intl.DateTimeFormat("fr-FR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-    }).format(date);
-
-    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-}
-
 export default function OrderSection() {
+    const { data: nextDistribution, isLoading, error } = useAsyncData(
+        fetchNextDistributionDate,
+    );
+
+    const dateLabel = isLoading
+        ? "Chargement…"
+        : nextDistribution
+          ? formatDistributionDate(nextDistribution.date)
+          : "Date à venir";
+
     return (
         <section
             id="commander"
@@ -77,11 +79,15 @@ export default function OrderSection() {
           </span>
 
                     <strong className="distribution-card__date">
-                        {nextFridayLabel()}
+                        {dateLabel}
                     </strong>
 
                     <p className="distribution-card__description">
-                        Les commandes sont ouvertes jusqu’au mardi soir.
+                        {error
+                            ? "La prochaine date n’a pas pu être chargée."
+                            : nextDistribution
+                              ? "Les commandes sont ouvertes jusqu’au mardi soir."
+                              : "La prochaine date sera bientôt annoncée."}
                     </p>
 
                     <a

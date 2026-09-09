@@ -15,6 +15,7 @@ const NAV_ITEMS: {
     { to: "/admin/galerie", label: "Galerie photos" },
     { to: "/admin/produits", label: "Produits" },
     { to: "/admin/points-de-distribution", label: "Points de distribution" },
+    { to: "/admin/distributions", label: "Calendrier des distributions" },
     { to: "/admin/utilisateurs", label: "Utilisateurs", adminOnly: true },
 ];
 
