@@ -80,8 +80,6 @@ export default function UpdatePasswordPage() {
     return (
         <div className="auth-page">
             <div className="auth-card">
-                <p className="eyebrow eyebrow--dark">Espace de gestion</p>
-
                 <h1 className="auth-card__title">Choisir un mot de passe</h1>
 
                 <p className="auth-card__description">
