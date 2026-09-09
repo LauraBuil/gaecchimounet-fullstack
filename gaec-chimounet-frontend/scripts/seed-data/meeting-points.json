@@ -1,0 +1,17 @@
+[
+    {
+        "title": "Marché de Trébons",
+        "schedule": "Le mercredi de 16h à 19h",
+        "location": "Place du village, 65200 Trébons"
+    },
+    {
+        "title": "Ferme Campagnolle Laloubère",
+        "schedule": "Le jeudi de 15h à 19h",
+        "location": "29 rue de l'Allée, 65310 Laloubère"
+    },
+    {
+        "title": "AMAP de Trébons",
+        "schedule": "Le mardi de 17h à 19h",
+        "location": "54B rue des Pyrénées, 65200 Trébons"
+    }
+]

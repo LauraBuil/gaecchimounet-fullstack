@@ -147,8 +147,30 @@ try {
         if (error) throw error;
     }
 
+    const meetingPoints = await readJson("meeting-points.json");
+    for (const [position, meetingPoint] of meetingPoints.entries()) {
+        const { data: existing, error: lookupError } = await supabase
+            .from("meeting_points")
+            .select("id")
+            .eq("title", meetingPoint.title)
+            .maybeSingle();
+        if (lookupError) throw lookupError;
+
+        const values = {
+            ...meetingPoint,
+            is_published: true,
+            position,
+        };
+        const query = existing
+            ? supabase.from("meeting_points").update(values).eq("id", existing.id)
+            : supabase.from("meeting_points").insert(values);
+        const { error } = await query;
+        if (error) throw error;
+    }
+
     console.log(
-        `Import terminé : ${products.length} produits et ${gallery.length} photos.`,
+        `Import terminé : ${products.length} produits, ${gallery.length} photos ` +
+            `et ${meetingPoints.length} points de distribution.`,
     );
 } finally {
     if (usesAdminSession) {
