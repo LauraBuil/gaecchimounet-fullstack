@@ -5,11 +5,12 @@ import type {
 import { supabase } from "../lib/supabase";
 import { assertOk } from "./errors";
 
-const DISTRIBUTION_SELECT = "id, distribution_date, is_published";
+const DISTRIBUTION_SELECT = "id, distribution_date, location, is_published";
 
 type DistributionDateRow = {
     id: string;
     distribution_date: string;
+    location: string;
     is_published: boolean;
 };
 
@@ -17,6 +18,7 @@ function toDistributionDate(row: DistributionDateRow): DistributionDate {
     return {
         id: row.id,
         date: row.distribution_date,
+        location: row.location,
         isPublished: row.is_published,
     };
 }
@@ -67,6 +69,7 @@ export async function fetchAllDistributionDates(): Promise<DistributionDate[]> {
 function toRow(input: DistributionDateInput) {
     return {
         distribution_date: input.date,
+        location: input.location.trim(),
         is_published: input.isPublished,
     };
 }

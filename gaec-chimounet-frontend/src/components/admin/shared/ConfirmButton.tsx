@@ -17,7 +17,7 @@ type ConfirmButtonProps = {
  */
 export default function ConfirmButton({
     label,
-    confirmLabel = "Confirmer",
+    confirmLabel = "Oui, supprimer",
     busyLabel = "Suppression…",
     onConfirm,
     disabled = false,
@@ -33,7 +33,7 @@ export default function ConfirmButton({
             return;
         }
 
-        timeoutRef.current = window.setTimeout(() => setIsArmed(false), 5000);
+        timeoutRef.current = window.setTimeout(() => setIsArmed(false), 10000);
 
         return () => {
             if (timeoutRef.current !== null) {
