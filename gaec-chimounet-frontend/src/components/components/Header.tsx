@@ -138,14 +138,6 @@ export default function Header() {
                             {item.label}
                         </NavLink>
                     ))}
-
-                    <NavLink
-                        to="/admin"
-                        className="nav__link nav__admin-link"
-                        onClick={closeMenu}
-                    >
-                        Administration
-                    </NavLink>
                 </nav>
             </div>
         </header>
