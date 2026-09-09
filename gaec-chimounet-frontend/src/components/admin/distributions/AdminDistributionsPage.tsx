@@ -140,6 +140,56 @@ export default function AdminDistributionsPage() {
         );
     };
 
+    const datesList = (
+        <section className="admin-distributions">
+            <h2>Dates enregistrées</h2>
+            {dates.length === 0 ? (
+                <p className="admin-state">Aucune distribution programmée.</p>
+            ) : (
+                <ul className="admin-list">
+                    {dates.map((distribution) => (
+                        <li className="admin-list__item" key={distribution.id}>
+                            <div className="admin-list__content">
+                                <h3 className="admin-list__title">
+                                    {formatDistributionDate(distribution.date)}
+                                    {!distribution.isPublished && (
+                                        <span className="admin-badge admin-badge--draft">
+                                            Masquée
+                                        </span>
+                                    )}
+                                    {distribution.date < today && (
+                                        <span className="admin-badge admin-badge--draft">
+                                            Passée
+                                        </span>
+                                    )}
+                                </h3>
+                                {distribution.location && (
+                                    <p className="admin-list__summary">
+                                        {distribution.location}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="admin-list__actions">
+                                <button
+                                    type="button"
+                                    className="admin-button"
+                                    onClick={() => startEdit(distribution)}
+                                >
+                                    Modifier
+                                </button>
+                                <ConfirmButton
+                                    label="Supprimer"
+                                    confirmLabel="Oui, supprimer"
+                                    onConfirm={() => handleDelete(distribution)}
+                                />
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </section>
+    );
+
     return (
         <div className="admin-page">
             <header className="admin-page__header">
@@ -169,8 +219,14 @@ export default function AdminDistributionsPage() {
                 </p>
             )}
 
-            {isFormOpen && (
-                <form className="admin-form admin-form--inline" onSubmit={handleSubmit}>
+            <div
+                className={[
+                    "admin-distribution-workspace",
+                    isFormOpen ? "admin-distribution-workspace--editing" : "",
+                ].filter(Boolean).join(" ")}
+            >
+                {isFormOpen && (
+                    <form className="admin-form admin-form--inline" onSubmit={handleSubmit}>
                     <h2>{editingId ? "Modifier la distribution" : "Nouvelle distribution"}</h2>
 
                     <div className="admin-field-row">
@@ -250,8 +306,13 @@ export default function AdminDistributionsPage() {
                             Annuler
                         </button>
                     </div>
-                </form>
-            )}
+                    </form>
+                )}
+
+                <AsyncBoundary isLoading={isLoading} error={error} onRetry={reload}>
+                    {datesList}
+                </AsyncBoundary>
+            </div>
 
             <AsyncBoundary isLoading={isLoading} error={error} onRetry={reload}>
                 <section className="admin-calendar" aria-label="Calendrier des distributions">
@@ -323,53 +384,6 @@ export default function AdminDistributionsPage() {
                     </p>
                 </section>
 
-                <section className="admin-distributions">
-                    <h2>Dates enregistrées</h2>
-                    {dates.length === 0 ? (
-                        <p className="admin-state">Aucune distribution programmée.</p>
-                    ) : (
-                        <ul className="admin-list">
-                            {dates.map((distribution) => (
-                                <li className="admin-list__item" key={distribution.id}>
-                                    <div className="admin-list__content">
-                                        <h3 className="admin-list__title">
-                                            {formatDistributionDate(distribution.date)}
-                                            {!distribution.isPublished && (
-                                                <span className="admin-badge admin-badge--draft">
-                                                    Masquée
-                                                </span>
-                                            )}
-                                            {distribution.date < today && (
-                                                <span className="admin-badge admin-badge--draft">
-                                                    Passée
-                                                </span>
-                                            )}
-                                        </h3>
-                                        {distribution.location && (
-                                            <p className="admin-list__summary">
-                                                {distribution.location}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div className="admin-list__actions">
-                                        <button
-                                            type="button"
-                                            className="admin-button"
-                                            onClick={() => startEdit(distribution)}
-                                        >
-                                            Modifier
-                                        </button>
-                                        <ConfirmButton
-                                            label="Supprimer"
-                                            confirmLabel="Oui, supprimer"
-                                            onConfirm={() => handleDelete(distribution)}
-                                        />
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </section>
             </AsyncBoundary>
         </div>
     );
