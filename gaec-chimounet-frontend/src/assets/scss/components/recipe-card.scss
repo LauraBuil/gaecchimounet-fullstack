@@ -83,3 +83,9 @@
     transform: translateX(0.25rem);
   }
 }
+
+// Le titre global des sections cible tous les h2 avec une spécificité plus
+// forte. Cette règle conserve une taille adaptée à toutes les cartes recettes.
+.section .recipe-card__title {
+  font-size: clamp(1.2rem, 1.4vw, 1.45rem);
+}
