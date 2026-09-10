@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router";
 
-import { ROLE_LABELS } from "../../api/users";
+import { fetchAllDistributionDates } from "../../api/distributions";
+import { fetchAllGalleryImages } from "../../api/gallery";
+import { fetchAllMeetingPoints } from "../../api/meetingPoints";
+import { fetchAllProducts } from "../../api/products";
+import { fetchAllRecipes } from "../../api/recipes";
+import { fetchStaffMembers, ROLE_LABELS } from "../../api/users";
 import logo from "../../assets/img/logos/logomainseul60px.webp";
 import { useAuth } from "../../features/auth/AuthContext";
+import { preloadQuery, type QueryLoader } from "../../lib/queryCache";
 
 const NAV_ITEMS: {
     to: string;
@@ -30,6 +36,23 @@ export default function AdminLayout() {
     };
 
     const visibleItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
+
+    useEffect(() => {
+        const timeout = window.setTimeout(() => {
+            const loaders: QueryLoader<unknown>[] = [
+                fetchAllRecipes,
+                fetchAllGalleryImages,
+                fetchAllProducts,
+                fetchAllMeetingPoints,
+                fetchAllDistributionDates,
+                ...(isAdmin ? [fetchStaffMembers] : []),
+            ];
+
+            void Promise.allSettled(loaders.map((loader) => preloadQuery(loader)));
+        }, 250);
+
+        return () => window.clearTimeout(timeout);
+    }, [isAdmin]);
 
     return (
         <div className="admin-shell">

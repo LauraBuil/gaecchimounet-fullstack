@@ -3,6 +3,7 @@ import type {
     DistributionDateInput,
 } from "../data/distributions/distributions.types";
 import { supabase } from "../lib/supabase";
+import { invalidateAllQueries } from "../lib/queryCache";
 import { assertOk } from "./errors";
 
 const DISTRIBUTION_SELECT = "id, distribution_date, location, is_published";
@@ -84,6 +85,8 @@ export async function createDistributionDate(
         .single();
 
     assertOk(error);
+
+    invalidateAllQueries();
     return (data as { id: string }).id;
 }
 
@@ -97,6 +100,8 @@ export async function updateDistributionDate(
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }
 
 export async function deleteDistributionDate(id: string): Promise<void> {
@@ -106,4 +111,6 @@ export async function deleteDistributionDate(id: string): Promise<void> {
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }
