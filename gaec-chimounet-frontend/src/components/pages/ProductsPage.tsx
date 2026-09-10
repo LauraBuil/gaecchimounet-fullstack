@@ -1,48 +1,45 @@
 import { useMemo, useState } from "react";
 
-import { fetchPublishedProducts } from "../../api/products";
-import type { ProductSeason } from "../../data/products/products.types";
-import { SEASON_LABELS, SEASONS } from "../../data/recipes/recipes.types";
+import { fetchKuupandaProducts } from "../../api/kuupanda";
 import { normalizeText } from "../../lib/text";
 import { useAsyncData } from "../../hooks/useAsyncData";
 import ProductCard from "../components/ProductCard";
 
-type SeasonFilter = "all" | ProductSeason;
-
-const seasonFilters: { label: string; value: SeasonFilter }[] = [
-    { label: "Toutes", value: "all" },
-    ...SEASONS.map((season) => ({
-        label: SEASON_LABELS[season],
-        value: season as SeasonFilter,
-    })),
-];
-
 export default function ProductsPage() {
-    const { data, isLoading, error, reload } = useAsyncData(fetchPublishedProducts);
+    const { data, isLoading, error, reload } = useAsyncData(fetchKuupandaProducts);
 
-    const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>("all");
+    const [selectedCategory, setSelectedCategory] = useState("all");
     const [productSearch, setProductSearch] = useState("");
 
     const products = useMemo(() => data ?? [], [data]);
+    const categories = useMemo(
+        () =>
+            Array.from(
+                new Map(
+                    products.map((product) => [product.categoryId, product.category]),
+                ),
+            ).map(([value, label]) => ({ value, label })),
+        [products],
+    );
 
     const filteredProducts = useMemo(() => {
         const normalizedSearch = normalizeText(productSearch);
 
         return products.filter((product) => {
-            const matchesSeason =
-                selectedSeason === "all" ||
-                product.seasons.includes(selectedSeason);
+            const matchesCategory =
+                selectedCategory === "all" ||
+                product.categoryId === selectedCategory;
 
             const matchesSearch =
                 normalizedSearch === "" ||
                 normalizeText(product.name).includes(normalizedSearch);
 
-            return matchesSeason && matchesSearch;
+            return matchesCategory && matchesSearch;
         });
-    }, [products, selectedSeason, productSearch]);
+    }, [products, selectedCategory, productSearch]);
 
     const resetFilters = () => {
-        setSelectedSeason("all");
+        setSelectedCategory("all");
         setProductSearch("");
     };
 
@@ -103,33 +100,36 @@ export default function ProductsPage() {
                             <div className="product-filters">
                                 <div className="product-filters__group">
                                     <p className="product-filters__label">
-                                        Filtrer par saison
+                                        Filtrer par catégorie
                                     </p>
 
                                     <div
                                         className="product-filters__seasons"
-                                        aria-label="Filtrer les produits par saison"
+                                        aria-label="Filtrer les produits par catégorie"
                                     >
-                                        {seasonFilters.map((season) => (
+                                        {[
+                                            { label: "Toutes", value: "all" },
+                                            ...categories,
+                                        ].map((category) => (
                                             <button
-                                                key={season.value}
+                                                key={category.value}
                                                 type="button"
                                                 className={[
                                                     "product-filters__season",
-                                                    selectedSeason === season.value
+                                                    selectedCategory === category.value
                                                         ? "product-filters__season--active"
                                                         : "",
                                                 ]
                                                     .filter(Boolean)
                                                     .join(" ")}
                                                 aria-pressed={
-                                                    selectedSeason === season.value
+                                                    selectedCategory === category.value
                                                 }
                                                 onClick={() =>
-                                                    setSelectedSeason(season.value)
+                                                    setSelectedCategory(category.value)
                                                 }
                                             >
-                                                {season.label}
+                                                {category.label}
                                             </button>
                                         ))}
                                     </div>
@@ -177,7 +177,7 @@ export default function ProductsPage() {
                                         : "produit trouvé"}
                                 </p>
 
-                                {(selectedSeason !== "all" || productSearch !== "") && (
+                                {(selectedCategory !== "all" || productSearch !== "") && (
                                     <button
                                         type="button"
                                         className="products-list__reset"
@@ -198,7 +198,7 @@ export default function ProductsPage() {
                                 <div className="products-list__empty">
                                     <h3>Aucun produit trouvé</h3>
 
-                                    <p>Essaie un autre nom ou une autre saison.</p>
+                                    <p>Essaie un autre nom ou une autre catégorie.</p>
 
                                     <button
                                         type="button"

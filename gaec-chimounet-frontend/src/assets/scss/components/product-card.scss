@@ -31,6 +31,12 @@
     transition: transform 450ms ease;
   }
 
+  &__image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, variables.$cream-200, variables.$green-100);
+  }
+
   //&:hover &__image {
   //  transform: scale(1.045);
   //}
@@ -43,6 +49,7 @@
     display: inline-flex;
     align-items: center;
 
+    min-height: 1.8rem;
     padding: 0.35rem 0.65rem;
 
     background: rgba(variables.$white, 0.92);
@@ -88,8 +95,23 @@
   }
 
   &__subtitle {
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.9rem;
     color: variables.$text-muted;
+  }
+
+  &__category {
+    margin-bottom: 0.55rem;
+    color: variables.$green-700;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__price {
+    margin: 0;
+    color: variables.$green-900;
+    font-weight: 800;
   }
 
   &__link {

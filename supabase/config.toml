@@ -27,3 +27,6 @@ enabled = true
 
 [functions.manage-users]
 verify_jwt = true
+
+[functions.kuupanda-catalog]
+verify_jwt = false
