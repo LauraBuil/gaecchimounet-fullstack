@@ -3,6 +3,7 @@ import type {
     MeetingPointInput,
 } from "../data/meetingPoints/meetingPoints.types";
 import { supabase } from "../lib/supabase";
+import { invalidateAllQueries } from "../lib/queryCache";
 import { assertOk } from "./errors";
 
 const MEETING_POINT_SELECT =
@@ -72,6 +73,8 @@ export async function createMeetingPoint(
 
     assertOk(error);
 
+    invalidateAllQueries();
+
     return (data as { id: string }).id;
 }
 
@@ -85,6 +88,8 @@ export async function updateMeetingPoint(
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }
 
 export async function deleteMeetingPoint(id: string): Promise<void> {
@@ -94,4 +99,6 @@ export async function deleteMeetingPoint(id: string): Promise<void> {
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }

@@ -1,4 +1,5 @@
 import { mediaUrl } from "../lib/media";
+import { invalidateAllQueries } from "../lib/queryCache";
 import { supabase } from "../lib/supabase";
 import type {
     Product,
@@ -83,6 +84,8 @@ export async function createProduct(input: ProductInput): Promise<string> {
 
     assertOk(error);
 
+    invalidateAllQueries();
+
     return (data as { id: string }).id;
 }
 
@@ -96,6 +99,8 @@ export async function updateProduct(
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }
 
 export async function deleteProduct(product: Product): Promise<void> {
@@ -105,6 +110,8 @@ export async function deleteProduct(product: Product): Promise<void> {
         .eq("id", product.id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 
     await removeMedia(product.imagePath);
 }
@@ -119,4 +126,6 @@ export async function setProductPublished(
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }

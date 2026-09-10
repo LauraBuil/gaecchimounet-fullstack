@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import { invalidateAllQueries } from "../lib/queryCache";
 import { assertOk, describeError } from "./errors";
 
 export type UserRole = "admin" | "exploitant";
@@ -66,6 +67,8 @@ export async function updateUserRole(
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }
 
 /** Met à jour son propre nom affiché. */
@@ -79,6 +82,8 @@ export async function updateOwnName(
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }
 
 /**
@@ -130,8 +135,10 @@ export async function inviteUser(
         fullName: fullName.trim(),
         redirectTo: `${window.location.origin}/admin/mot-de-passe`,
     });
+    invalidateAllQueries();
 }
 
 export async function deleteUser(id: string): Promise<void> {
     await callUserFunction("delete", { userId: id });
+    invalidateAllQueries();
 }

@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { describeError } from "../api/errors";
+import {
+    readCachedQuery,
+    runCachedQuery,
+    type QueryLoader,
+} from "../lib/queryCache";
 
 type AsyncState<T> = {
     data: T | null;
@@ -17,11 +22,12 @@ type AsyncState<T> = {
  * arriver en dernier et écraser la plus récente.
  */
 export function useAsyncData<T>(
-    loader: () => Promise<T>,
+    loader: QueryLoader<T>,
     dependencies: unknown[] = [],
 ): AsyncState<T> {
-    const [data, setData] = useState<T | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const initialData = readCachedQuery(loader);
+    const [data, setData] = useState<T | null>(initialData ?? null);
+    const [isLoading, setIsLoading] = useState(initialData === undefined);
     const [error, setError] = useState<string | null>(null);
     const [reloadToken, setReloadToken] = useState(0);
 
@@ -39,10 +45,19 @@ export function useAsyncData<T>(
     useEffect(() => {
         const currentRequest = ++requestId.current;
 
+        const cached = reloadToken === 0 ? readCachedQuery(loader) : undefined;
+
+        if (cached !== undefined) {
+            setData(cached);
+            setIsLoading(false);
+            setError(null);
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
 
-        loader()
+        runCachedQuery(loader, reloadToken > 0)
             .then((result) => {
                 if (!isMounted.current || currentRequest !== requestId.current) {
                     return;

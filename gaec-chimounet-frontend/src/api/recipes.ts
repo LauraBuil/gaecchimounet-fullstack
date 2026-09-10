@@ -1,4 +1,5 @@
 import { mediaUrl } from "../lib/media";
+import { invalidateAllQueries } from "../lib/queryCache";
 import { supabase } from "../lib/supabase";
 import type {
     Recipe,
@@ -162,6 +163,8 @@ export async function createRecipe(input: RecipeInput): Promise<string> {
 
     assertOk(error);
 
+    invalidateAllQueries();
+
     return data as string;
 }
 
@@ -175,6 +178,8 @@ export async function updateRecipe(
     });
 
     assertOk(error);
+
+    invalidateAllQueries();
 }
 
 /**
@@ -186,6 +191,8 @@ export async function deleteRecipe(recipe: Recipe): Promise<void> {
     const { error } = await supabase.from("recipes").delete().eq("id", recipe.id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 
     await removeMedia(recipe.imagePath);
 }
@@ -200,4 +207,6 @@ export async function setRecipePublished(
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }

@@ -1,5 +1,6 @@
 import type { GalleryImage } from "../data/gallery/gallery.types";
 import { mediaUrl } from "../lib/media";
+import { invalidateAllQueries } from "../lib/queryCache";
 import { supabase } from "../lib/supabase";
 import { assertOk } from "./errors";
 import { removeMedia, uploadMedia } from "./media";
@@ -79,6 +80,8 @@ export async function addGalleryImage(
         assertOk(error);
     }
 
+    invalidateAllQueries();
+
     return toGalleryImage(data as GalleryRow);
 }
 
@@ -110,6 +113,8 @@ export async function updateGalleryImage(
         .eq("id", id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 }
 
 export async function deleteGalleryImage(image: GalleryImage): Promise<void> {
@@ -119,6 +124,8 @@ export async function deleteGalleryImage(image: GalleryImage): Promise<void> {
         .eq("id", image.id);
 
     assertOk(error);
+
+    invalidateAllQueries();
 
     await removeMedia(image.storagePath);
 }
@@ -138,4 +145,6 @@ export async function reorderGalleryImages(
     if (failure) {
         assertOk(failure.error);
     }
+
+    invalidateAllQueries();
 }
