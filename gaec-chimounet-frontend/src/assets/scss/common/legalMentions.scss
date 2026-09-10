@@ -1,56 +1,170 @@
-@use '../abstracts/variables' as *;
+@use "../abstracts/variables" as variables;
+@use "../abstracts/mixins" as mixins;
 
-.background-image-mentions {
-  /*position: relative;
-  z-index: 1;*/
-  background-image: linear-gradient(to bottom, rgba(78, 97, 74, 0.1), rgba(78, 97, 74, 1)), url("/img/bg_img/marmottefrancis_flickr.png");
-  background-size: cover;
-  background-position: center;
-  margin: -1rem 0 0 0;
+.legal-page {
+  min-height: 100vh;
+  background: variables.$cream-100;
 }
 
-.background-size {
-  width: 100%;
-  height: 648px;
+.legal-hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(5rem, 11vw, 8rem);
+  background:
+    radial-gradient(circle at 88% 20%, rgba(variables.$green-700, 0.16), transparent 24rem),
+    linear-gradient(145deg, variables.$green-100 0%, variables.$cream-100 72%);
+  border-bottom: 1px solid rgba(variables.$green-900, 0.08);
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: clamp(-5rem, -3vw, -2rem);
+    bottom: clamp(-8rem, -8vw, -4rem);
+    width: clamp(14rem, 30vw, 25rem);
+    aspect-ratio: 1;
+    border: 1px solid rgba(variables.$green-700, 0.16);
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 2.5rem rgba(variables.$green-700, 0.035),
+      0 0 0 5rem rgba(variables.$green-700, 0.025);
+    pointer-events: none;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    max-width: 54rem;
+  }
+
+  h1 {
+    max-width: 14ch;
+    margin-bottom: 1.25rem;
+    color: variables.$green-900;
+    font-family: variables.$font-heading;
+    font-size: clamp(2.8rem, 7vw, 5.6rem);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+  }
+
+  &__intro {
+    max-width: 42rem;
+    margin-bottom: 0;
+    color: variables.$text-muted;
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
+    line-height: 1.75;
+  }
 }
 
-.background-color {
-  /* Remplace la couleur d'arrière-plan globale */
-  background-color: transparent;
+.legal-content {
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
 }
 
-.h1para2-mentions {
-  text-align: center;
-  font-size: 5rem;
-  font-weight: 400;
-  padding-top: 18rem;
-  padding-bottom: 8rem;
-  margin: 1rem 0 0 0;
+.legal-document {
+  max-width: 58rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  background: variables.$white;
+  border: 1px solid rgba(variables.$green-900, 0.07);
+  border-radius: variables.$radius-large;
+  box-shadow: variables.$shadow-card;
 }
 
-.padding {
-  padding: 2rem 0;
+.legal-section {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 1.25rem;
+
+  & + & {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(variables.$green-900, 0.09);
+  }
+
+  &__number {
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border-radius: 50%;
+    background: variables.$green-100;
+    color: variables.$green-700;
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  h2 {
+    margin-bottom: 0.75rem;
+    color: variables.$green-900;
+    font-family: variables.$font-heading;
+    font-size: clamp(1.45rem, 3vw, 1.85rem);
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  p {
+    margin-bottom: 0;
+    color: variables.$text-muted;
+    line-height: 1.8;
+  }
+
+  a {
+    color: variables.$green-700;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+
+    &:hover {
+      color: variables.$green-900;
+    }
+  }
 }
 
-.backgroundleft {
-  margin-left: 6rem;
+.legal-contact {
+  margin-top: 2.5rem;
+  padding: 1.4rem 1.6rem;
+  background: variables.$green-900;
+  border-radius: variables.$radius-medium;
+  color: variables.$cream-100;
+  line-height: 1.7;
+
+  a {
+    color: variables.$white;
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
 }
 
-.backgroundright {
-  margin-right: 6rem;
-}
+.legal-optout { margin-top: 1.25rem; }
+.legal-optout__status { margin-top: 0.65rem; font-size: 0.84rem; }
 
-.lettrine-mention {
-  font-size: 2rem;
-  background-color: transparent;
-}
+@include mixins.mobile {
+  .legal-hero {
+    padding-block: 4rem;
 
-.text-mention {
-  text-align: justify;
-  font-weight: 300;
-}
+    h1 {
+      text-wrap: balance;
+    }
+  }
 
-.mention-legales {
-  background-color: transparent;
-  margin: 2rem 0;
+  .legal-document {
+    border-radius: variables.$radius-medium;
+  }
+
+  .legal-section {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+
+    &__number {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+
+  .legal-contact {
+    padding: 1.25rem;
+  }
 }

@@ -144,7 +144,11 @@
   }
 
   &__season {
-    padding: 0.65rem 1rem;
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 1rem 0;
 
     background: variables.$cream-100;
     border: 1px solid rgba(
@@ -157,6 +161,8 @@
     font: inherit;
     font-size: 0.85rem;
     font-weight: 700;
+    line-height: 1;
+    text-align: center;
 
     cursor: pointer;
 

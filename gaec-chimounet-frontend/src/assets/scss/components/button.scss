@@ -5,11 +5,13 @@
   min-height: 48px;
   align-items: center;
   justify-content: center;
-  padding-inline: 24px;
+  padding: 2px 24px 0;
 
   border-radius: variables.$radius-pill;
 
   font-weight: 700;
+  line-height: 1;
+  text-align: center;
 
   transition:
           transform 180ms ease,
@@ -36,5 +38,14 @@
   &--light {
     background: rgba(variables.$white, 0.92);
     color: variables.$green-900;
+  }
+
+  &--secondary {
+    background: variables.$green-100;
+    color: variables.$green-900;
+
+    &:hover {
+      background: variables.$green-200;
+    }
   }
 }

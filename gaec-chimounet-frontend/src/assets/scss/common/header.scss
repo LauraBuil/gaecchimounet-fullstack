@@ -105,13 +105,16 @@
 
   &__admin-link {
     display: inline-flex;
+    min-height: 42px;
     align-items: center;
     justify-content: center;
-    padding: 0.7rem 1.1rem;
+    padding: 2px 1.1rem 0;
 
     background: variables.$green-900;
     color: variables.$cream-100;
     border-radius: variables.$radius-pill;
+    line-height: 1;
+    text-align: center;
 
     &::after {
       display: none;
@@ -257,7 +260,8 @@
 
     &__admin-link {
       margin-top: 0.75rem;
-      padding: 0.9rem 1rem;
+      min-height: 44px;
+      padding: 2px 1rem 0;
 
       color: variables.$cream-100;
       text-align: center;

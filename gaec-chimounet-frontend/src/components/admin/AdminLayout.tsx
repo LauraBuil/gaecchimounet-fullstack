@@ -7,6 +7,7 @@ import { fetchAllMeetingPoints } from "../../api/meetingPoints";
 import { fetchAllProducts } from "../../api/products";
 import { fetchAllRecipes } from "../../api/recipes";
 import { fetchStaffMembers, ROLE_LABELS } from "../../api/users";
+import { fetchAudienceStats } from "../../api/analytics";
 import logo from "../../assets/img/logos/logomainseul60px.webp";
 import { useAuth } from "../../features/auth/AuthContext";
 import { preloadQuery, type QueryLoader } from "../../lib/queryCache";
@@ -22,6 +23,7 @@ const NAV_ITEMS: {
     { to: "/admin/produits", label: "Produits" },
     { to: "/admin/points-de-distribution", label: "Points de distribution" },
     { to: "/admin/distributions", label: "Calendrier des distributions" },
+    { to: "/admin/statistiques", label: "Statistiques de visites" },
     { to: "/admin/utilisateurs", label: "Utilisateurs", adminOnly: true },
 ];
 
@@ -45,6 +47,7 @@ export default function AdminLayout() {
                 fetchAllProducts,
                 fetchAllMeetingPoints,
                 fetchAllDistributionDates,
+                fetchAudienceStats,
                 ...(isAdmin ? [fetchStaffMembers] : []),
             ];
 
