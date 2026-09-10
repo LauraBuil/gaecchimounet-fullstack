@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
 import { describeError } from "../../../api/errors";
@@ -18,6 +18,13 @@ export default function AdminRecipesPage() {
     const [actionError, setActionError] = useState<string | null>(null);
 
     const recipes = data ?? [];
+
+    // Le formulaire est un écran séparé chargé à la demande. On prépare son
+    // petit fichier pendant que l'utilisateur parcourt la liste afin que le
+    // premier clic sur « Modifier » ne soit pas ralenti par ce téléchargement.
+    useEffect(() => {
+        void import("./AdminRecipeFormPage");
+    }, []);
 
     const handleTogglePublished = async (recipe: Recipe) => {
         setActionError(null);
@@ -112,6 +119,7 @@ export default function AdminRecipesPage() {
                                 <Link
                                     className="admin-button"
                                     to={`/admin/recettes/${recipe.id}`}
+                                    state={{ recipe }}
                                 >
                                     Modifier
                                 </Link>
