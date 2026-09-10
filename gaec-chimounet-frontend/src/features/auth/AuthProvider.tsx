@@ -42,6 +42,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
             if (error) {
                 console.error("Lecture du profil impossible :", error.message);
+                profileUserId.current = null;
                 setProfile(null);
                 setIsLoading(false);
                 return;
@@ -55,6 +56,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
                     `Aucun profil pour le compte ${email}. ` +
                         "Vérifiez que le trigger handle_new_user est bien installé.",
                 );
+                profileUserId.current = null;
                 setProfile(null);
                 setIsLoading(false);
                 return;
