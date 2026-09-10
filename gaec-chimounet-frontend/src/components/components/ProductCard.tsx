@@ -1,39 +1,75 @@
-import type {
-    Product,
-    //ProductAvailability,
-} from "../../data/products/products.types.ts";
+import type { CatalogProduct } from "../../data/products/catalog.types";
 
 type ProductCardProps = {
-    product: Product;
+    product: CatalogProduct;
 };
 
-// const availabilityLabels: Record<ProductAvailability, string> = {
-//     available: "Disponible",
-//     soon: "Bientôt disponible",
-//     unavailable: "Indisponible",
-// };
+const unitLabels: Record<string, string> = {
+    kg: "kg",
+    unit: "unité",
+    piece: "pièce",
+};
 
-export default function ProductCard({
-                                        product,
-                                    }: ProductCardProps) {
+function formatPrice(product: CatalogProduct): string | null {
+    if (product.price === null) {
+        return null;
+    }
+
+    const price = new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+    }).format(product.price);
+    const unit = unitLabels[product.saleUnit] ?? product.saleUnit;
+
+    return unit ? `${price} / ${unit}` : price;
+}
+
+function stockLabel(product: CatalogProduct): string {
+    if (!product.isAvailable) {
+        return "Épuisé";
+    }
+
+    if (!product.isStockManaged || product.stockQuantity === null) {
+        return "Disponible";
+    }
+
+    const quantity = new Intl.NumberFormat("fr-FR", {
+        maximumFractionDigits: 2,
+    }).format(product.stockQuantity);
+    const unit = unitLabels[product.stockUnit] ?? product.stockUnit;
+
+    return `Stock : ${quantity}${unit ? ` ${unit}` : ""}`;
+}
+
+export default function ProductCard({ product }: ProductCardProps) {
+    const price = formatPrice(product);
+
     return (
         <article className="product-card">
             <div className="product-card__image-wrapper">
-                <img
-                    className="product-card__image"
-                    src={product.imageUrl}
-                    alt={product.imageAlt}
-                    loading="lazy"
-                />
+                {product.imageUrl ? (
+                    <img
+                        className="product-card__image"
+                        src={product.imageUrl}
+                        alt={product.name}
+                        loading="lazy"
+                    />
+                ) : (
+                    <div className="product-card__image-placeholder" aria-hidden="true" />
+                )}
 
-        {/*        <span*/}
-        {/*            className={[*/}
-        {/*                "product-card__availability",*/}
-        {/*                `product-card__availability--${product.availability}`,*/}
-        {/*            ].join(" ")}*/}
-        {/*        >*/}
-        {/*  {availabilityLabels[product.availability]}*/}
-        {/*</span>*/}
+                <span
+                    className={[
+                        "product-card__availability",
+                        !product.isAvailable
+                            ? "product-card__availability--unavailable"
+                            : "",
+                    ]
+                        .filter(Boolean)
+                        .join(" ")}
+                >
+                    {stockLabel(product)}
+                </span>
             </div>
 
             <div className="product-card__content">
@@ -41,17 +77,13 @@ export default function ProductCard({
                     {product.name}
                 </h3>
 
-                <p className="product-card__subtitle">
-                    {product.subtitle}
-                </p>
+                <p className="product-card__category">{product.category}</p>
 
-                {/*<a*/}
-                {/*    className="product-card__link"*/}
-                {/*    href={`/produits/${product.slug}`}*/}
-                {/*>*/}
-                {/*    Découvrir*/}
-                {/*    <span aria-hidden="true">→</span>*/}
-                {/*</a>*/}
+                {product.description && (
+                    <p className="product-card__subtitle">{product.description}</p>
+                )}
+
+                {price && <p className="product-card__price">{price}</p>}
             </div>
         </article>
     );
