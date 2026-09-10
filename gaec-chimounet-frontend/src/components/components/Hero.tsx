@@ -69,11 +69,15 @@ export default function Hero() {
                 </div>
 
                 <aside className="hero__aside" aria-label="Labels et période de commande">
-                    <div className="order-badge">
+                    <a
+                        className="order-badge"
+                        href="#commander"
+                        aria-label="Voir comment commander"
+                    >
                         <strong>Commandez</strong>
                         <span>du vendredi</span>
                         <span>au mardi</span>
-                    </div>
+                    </a>
 
                     <div className="hero__certifications">
                         {certifications.map((certification) => (
