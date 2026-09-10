@@ -94,8 +94,15 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         });
 
         const { data: subscription } = supabase.auth.onAuthStateChange(
-            (_event, nextSession) => {
+            (event, nextSession) => {
                 if (!isActive) {
+                    return;
+                }
+
+                // getSession() restaure déjà la session au montage. Supabase
+                // émet aussi INITIAL_SESSION à l'abonnement : sans ce garde-fou,
+                // le profil partait deux fois sur le réseau au même démarrage.
+                if (event === "INITIAL_SESSION") {
                     return;
                 }
 
