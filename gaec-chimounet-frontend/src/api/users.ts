@@ -128,6 +128,7 @@ export async function inviteUser(
         email: email.trim().toLowerCase(),
         role,
         fullName: fullName.trim(),
+        redirectTo: `${window.location.origin}/admin/mot-de-passe`,
     });
 }
 

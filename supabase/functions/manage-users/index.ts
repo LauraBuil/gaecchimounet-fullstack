@@ -20,6 +20,7 @@ type InvitePayload = {
     email: string;
     role: "admin" | "exploitant";
     fullName?: string;
+    redirectTo: string;
 };
 
 type DeletePayload = {
@@ -37,6 +38,21 @@ const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 // production. Renseignez SITE_URL avec l'adresse du site (ex.
 // https://gaec-chimounet.fr) via `supabase secrets set`.
 const SITE_URL = Deno.env.get("SITE_URL") ?? "*";
+
+const allowedRedirectOrigins = new Set([
+    "https://staging.gaecchimounet.fr",
+    "https://gaecchimounet.fr",
+    "https://www.gaecchimounet.fr",
+    "http://localhost:5173",
+]);
+
+if (SITE_URL !== "*") {
+    try {
+        allowedRedirectOrigins.add(new URL(SITE_URL).origin);
+    } catch {
+        console.warn("SITE_URL n'est pas une URL valide.");
+    }
+}
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": SITE_URL,
@@ -132,6 +148,21 @@ Deno.serve(async (request: Request): Promise<Response> => {
             return json({ error: "Rôle inconnu." }, 400);
         }
 
+        let redirectTo: URL;
+
+        try {
+            redirectTo = new URL(payload.redirectTo);
+        } catch {
+            return json({ error: "Adresse de redirection invalide." }, 400);
+        }
+
+        if (
+            !allowedRedirectOrigins.has(redirectTo.origin) ||
+            redirectTo.pathname !== "/admin/mot-de-passe"
+        ) {
+            return json({ error: "Adresse de redirection non autorisée." }, 400);
+        }
+
         const { data, error } = await adminClient.auth.admin.inviteUserByEmail(
             email,
             {
@@ -141,7 +172,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
                             ? payload.fullName.trim()
                             : "",
                 },
-                redirectTo: SITE_URL === "*" ? undefined : `${SITE_URL}/admin/mot-de-passe`,
+                redirectTo: redirectTo.toString(),
             },
         );
 

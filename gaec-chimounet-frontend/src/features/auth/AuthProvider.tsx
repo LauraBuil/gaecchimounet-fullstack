@@ -24,10 +24,12 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     // Invalide une lecture devenue obsolète après une déconnexion ou un
     // changement de compte.
     const profileRequestId = useRef(0);
+    const profileUserId = useRef<string | null>(null);
 
     const loadProfile = useCallback(
         async (userId: string, email: string): Promise<void> => {
             const requestId = ++profileRequestId.current;
+            profileUserId.current = userId;
             const { data, error } = await supabase
                 .from("profiles")
                 .select("id, email, full_name, role")
@@ -88,6 +90,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
                 );
             } else {
                 profileRequestId.current += 1;
+                profileUserId.current = null;
                 setProfile(null);
                 setIsLoading(false);
             }
@@ -112,8 +115,16 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
                 if (!userId) {
                     profileRequestId.current += 1;
+                    profileUserId.current = null;
                     setProfile(null);
                     setIsLoading(false);
+                    return;
+                }
+
+                // SIGNED_IN peut aussi être émis quand un onglet reprend le
+                // focus. La session doit être actualisée, mais le profil déjà
+                // chargé ne doit pas faire disparaître toute l'administration.
+                if (profileUserId.current === userId) {
                     return;
                 }
 
@@ -157,6 +168,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         }
 
         profileRequestId.current += 1;
+        profileUserId.current = null;
         setProfile(null);
     }, []);
 
