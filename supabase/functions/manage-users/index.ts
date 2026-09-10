@@ -180,24 +180,25 @@ Deno.serve(async (request: Request): Promise<Response> => {
             return json({ error: `Invitation impossible : ${error.message}` }, 400);
         }
 
-        // Le trigger `handle_new_user` a créé le profil avec le rôle par défaut
-        // « exploitant ». On applique le rôle demandé par-dessus.
+        // L'upsert garantit que le profil existe même si GoTrue renseigne
+        // invited_at après l'insertion initiale dans auth.users.
         const { error: roleError } = await adminClient
             .from("profiles")
-            .update({
+            .upsert({
+                id: data.user.id,
+                email,
                 role: payload.role,
                 full_name:
                     typeof payload.fullName === "string"
                         ? payload.fullName.trim() || null
                         : null,
-            })
-            .eq("id", data.user.id);
+            }, { onConflict: "id" });
 
         if (roleError) {
             return json(
                 {
                     error:
-                        "Le compte a été créé mais son rôle n'a pas pu être " +
+                        "Le compte a été créé mais son profil n'a pas pu être " +
                         `appliqué : ${roleError.message}`,
                 },
                 500,
