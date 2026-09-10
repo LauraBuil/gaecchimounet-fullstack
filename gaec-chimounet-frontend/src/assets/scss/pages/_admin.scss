@@ -136,7 +136,8 @@
   background: variables.$white;
 
   @include mixins.mobile {
-    padding: 10px 16px;
+    gap: 6px;
+    padding: 8px 10px;
   }
 
   &__toggle {
@@ -156,6 +157,12 @@
     @include mixins.tablet {
       display: inline-flex;
     }
+
+    @include mixins.mobile {
+      min-height: 34px;
+      padding: 2px 10px 0;
+      font-size: 0.75rem;
+    }
   }
 
   &__brand {
@@ -172,6 +179,11 @@
       height: 46px;
       flex-shrink: 0;
       object-fit: contain;
+
+      @include mixins.mobile {
+        width: 34px;
+        height: 34px;
+      }
     }
 
     span {
@@ -190,7 +202,8 @@
     margin-left: auto;
 
     @include mixins.mobile {
-      gap: 8px;
+      min-width: 0;
+      gap: 6px;
     }
   }
 
@@ -218,6 +231,35 @@
     @include mixins.mobile {
       display: none;
     }
+  }
+
+  @include mixins.mobile {
+    .admin-badge {
+      min-height: 22px;
+      padding: 2px 7px 0;
+      font-size: 0.62rem;
+    }
+
+    .admin-button {
+      min-height: 34px;
+      padding: 2px 8px 0;
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+  }
+}
+
+.admin-label--mobile {
+  display: none;
+
+  @include mixins.mobile {
+    display: inline;
+  }
+}
+
+@include mixins.mobile {
+  .admin-label--desktop {
+    display: none;
   }
 }
 
@@ -276,7 +318,7 @@
     bottom: 0;
     left: 0;
     z-index: 15;
-    width: 260px;
+    width: min(260px, 100vw);
     background: variables.$white;
     box-shadow: variables.$shadow-card;
     transform: translateX(-100%);
@@ -294,7 +336,7 @@
   padding: 28px 32px 80px;
 
   @include mixins.mobile {
-    padding: 20px 16px 60px;
+    padding: 18px 12px 60px;
   }
 }
 
@@ -313,6 +355,12 @@
       @include mixins.section-title;
       font-size: clamp(1.9rem, 4vw, 2.6rem);
       margin-bottom: 6px;
+
+      @include mixins.mobile {
+        font-size: 1.65rem;
+        line-height: 1.05;
+        overflow-wrap: anywhere;
+      }
     }
   }
 
@@ -514,6 +562,10 @@
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   margin-bottom: 36px;
+
+  @include mixins.mobile {
+    gap: 12px;
+  }
 }
 
 .admin-card {
@@ -523,6 +575,10 @@
   gap: 4px;
   padding: 22px;
   transition: transform 180ms ease;
+
+  @include mixins.mobile {
+    padding: 18px;
+  }
 
   &:hover {
     transform: translateY(-3px);
