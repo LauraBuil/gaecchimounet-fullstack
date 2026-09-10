@@ -68,6 +68,22 @@ a {
   text-decoration: none;
 }
 
+a,
+button,
+[role="button"] {
+  // Retire le rectangle bleu ajouté par les navigateurs tactiles. Les
+  // contours `:focus-visible` restent actifs pour la navigation au clavier.
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none) {
+  a:active,
+  button:active,
+  [role="button"]:active {
+    opacity: 0.78;
+  }
+}
+
 img {
   display: block;
   max-width: 100%;
