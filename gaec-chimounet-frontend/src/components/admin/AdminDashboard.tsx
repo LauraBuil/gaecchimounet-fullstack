@@ -1,53 +1,19 @@
 import { Link } from "react-router";
 
-import { fetchAllDistributionDates } from "../../api/distributions";
-import { fetchAllGalleryImages } from "../../api/gallery";
-import { fetchAllMeetingPoints } from "../../api/meetingPoints";
-import { fetchAllProducts } from "../../api/products";
-import { fetchAllRecipes } from "../../api/recipes";
+import {
+    fetchAdminDashboardCounts,
+    type AdminDashboardCounts,
+} from "../../api/dashboard";
 import { ROLE_DESCRIPTIONS } from "../../api/users";
 import { useAuth } from "../../features/auth/AuthContext";
 import { useAsyncData } from "../../hooks/useAsyncData";
 import AsyncBoundary from "./shared/AsyncBoundary";
 
-type Counts = {
-    recipes: { total: number; drafts: number };
-    gallery: { total: number; drafts: number };
-    products: { total: number; drafts: number };
-    meetingPoints: { total: number; drafts: number };
-    distributions: { total: number; drafts: number };
-};
-
-function summarize<T extends { isPublished: boolean }>(items: T[]) {
-    return {
-        total: items.length,
-        drafts: items.filter((item) => !item.isPublished).length,
-    };
-}
-
-async function loadCounts(): Promise<Counts> {
-    // Les quatre lectures sont indépendantes : en parallèle, le tableau de bord
-    // s'affiche au temps de la plus lente et non de leur somme.
-    const [recipes, gallery, products, meetingPoints, distributions] = await Promise.all([
-        fetchAllRecipes(),
-        fetchAllGalleryImages(),
-        fetchAllProducts(),
-        fetchAllMeetingPoints(),
-        fetchAllDistributionDates(),
-    ]);
-
-    return {
-        recipes: summarize(recipes),
-        gallery: summarize(gallery),
-        products: summarize(products),
-        meetingPoints: summarize(meetingPoints),
-        distributions: summarize(distributions),
-    };
-}
-
 export default function AdminDashboard() {
     const { profile } = useAuth();
-    const { data, isLoading, error, reload } = useAsyncData(loadCounts);
+    const { data, isLoading, error, reload } = useAsyncData<AdminDashboardCounts>(
+        fetchAdminDashboardCounts,
+    );
 
     const cards: {
         to: string;
