@@ -1,13 +1,14 @@
 import { Link } from "react-router";
 
-import { fetchKuupandaProducts } from "../../api/kuupanda";
+import { fetchProductCatalogView } from "../../api/kuupanda";
 import { useAsyncData } from "../../hooks/useAsyncData";
 import ProductCard from "./ProductCard";
 
 export default function ProductsSection() {
-    const { data, isLoading, error } = useAsyncData(fetchKuupandaProducts);
+    const { data, isLoading, error } = useAsyncData(fetchProductCatalogView);
 
-    const products = data ?? [];
+    const products = data?.products ?? [];
+    const showPrices = data?.showPrices ?? true;
 
     if (!isLoading && !error && products.length === 0) {
         return null;
@@ -45,7 +46,11 @@ export default function ProductsSection() {
                 {!isLoading && !error && (
                     <div className="products-section__grid">
                         {products.filter((product) => product.isAvailable).slice(0, 4).map((product) => (
-                            <ProductCard key={product.id} product={product} />
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                showPrice={showPrices}
+                            />
                         ))}
                     </div>
                 )}

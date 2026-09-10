@@ -3,6 +3,7 @@ import type {
     KuupandaCatalog,
 } from "../data/products/catalog.types";
 import { supabase } from "../lib/supabase";
+import { fetchSiteSettings } from "./siteSettings";
 
 function isCatalogProduct(value: unknown): value is CatalogProduct {
     if (!value || typeof value !== "object") {
@@ -48,4 +49,21 @@ export async function fetchKuupandaCatalog(): Promise<KuupandaCatalog> {
 export async function fetchKuupandaProducts(): Promise<CatalogProduct[]> {
     const catalog = await fetchKuupandaCatalog();
     return catalog.products;
+}
+
+export type ProductCatalogView = {
+    products: CatalogProduct[];
+    showPrices: boolean;
+};
+
+export async function fetchProductCatalogView(): Promise<ProductCatalogView> {
+    const [catalog, settings] = await Promise.all([
+        fetchKuupandaCatalog(),
+        fetchSiteSettings(),
+    ]);
+
+    return {
+        products: catalog.products,
+        showPrices: settings.showProductPrices,
+    };
 }

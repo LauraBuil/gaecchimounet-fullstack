@@ -1,17 +1,18 @@
 import { useMemo, useState } from "react";
 
-import { fetchKuupandaProducts } from "../../api/kuupanda";
+import { fetchProductCatalogView } from "../../api/kuupanda";
 import { normalizeText } from "../../lib/text";
 import { useAsyncData } from "../../hooks/useAsyncData";
 import ProductCard from "../components/ProductCard";
 
 export default function ProductsPage() {
-    const { data, isLoading, error, reload } = useAsyncData(fetchKuupandaProducts);
+    const { data, isLoading, error, reload } = useAsyncData(fetchProductCatalogView);
 
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [productSearch, setProductSearch] = useState("");
 
-    const products = useMemo(() => data ?? [], [data]);
+    const products = useMemo(() => data?.products ?? [], [data]);
+    const showPrices = data?.showPrices ?? true;
     const categories = useMemo(
         () =>
             Array.from(
@@ -191,7 +192,11 @@ export default function ProductsPage() {
                             {filteredProducts.length > 0 ? (
                                 <div className="products-list__grid">
                                     {filteredProducts.map((product) => (
-                                        <ProductCard key={product.id} product={product} />
+                                        <ProductCard
+                                            key={product.id}
+                                            product={product}
+                                            showPrice={showPrices}
+                                        />
                                     ))}
                                 </div>
                             ) : (

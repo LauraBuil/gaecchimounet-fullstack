@@ -396,6 +396,101 @@
   }
 }
 
+.admin-product-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 18px 20px;
+  border: 1px solid rgba(variables.$green-900, 0.1);
+  border-radius: variables.$radius-medium;
+  background: variables.$white;
+  box-shadow: variables.$shadow-card;
+
+  h2 {
+    margin-bottom: 4px;
+    color: variables.$green-900;
+    font-size: 1rem;
+  }
+
+  p {
+    margin: 0;
+    color: variables.$text-muted;
+    font-size: 0.85rem;
+  }
+
+  @include mixins.mobile {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.admin-switch {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  &__track {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    border-radius: variables.$radius-pill;
+    background: rgba(variables.$green-900, 0.18);
+    transition: background-color 160ms ease;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: variables.$white;
+      box-shadow: 0 2px 6px rgba(variables.$green-900, 0.2);
+      transition: transform 160ms ease;
+    }
+  }
+
+  input:checked + &__track {
+    background: variables.$green-800;
+
+    &::after {
+      transform: translateX(20px);
+    }
+  }
+
+  input:focus-visible + &__track {
+    outline: 3px solid rgba(variables.$green-700, 0.35);
+    outline-offset: 3px;
+  }
+
+  input:disabled + &__track {
+    opacity: 0.55;
+  }
+
+  &__label {
+    color: variables.$green-900;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+}
+
 // ===========================================================================
 // Boutons et pastilles
 // ===========================================================================

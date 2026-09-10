@@ -2,6 +2,7 @@ import type { CatalogProduct } from "../../data/products/catalog.types";
 
 type ProductCardProps = {
     product: CatalogProduct;
+    showPrice: boolean;
 };
 
 const unitLabels: Record<string, string> = {
@@ -41,7 +42,7 @@ function stockLabel(product: CatalogProduct): string {
     return `Stock : ${quantity}${unit ? ` ${unit}` : ""}`;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, showPrice }: ProductCardProps) {
     const price = formatPrice(product);
 
     return (
@@ -83,7 +84,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                     <p className="product-card__subtitle">{product.description}</p>
                 )}
 
-                {price && <p className="product-card__price">{price}</p>}
+                {showPrice && price && (
+                    <p className="product-card__price">{price}</p>
+                )}
             </div>
         </article>
     );
