@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
 
 import { describeError } from "../../../api/errors";
 import {
@@ -64,18 +64,38 @@ function toInput(recipe: Recipe): RecipeInput {
 
 export default function AdminRecipeFormPage() {
     const { id } = useParams<{ id: string }>();
+    const location = useLocation();
     const navigate = useNavigate();
 
     const isCreating = !id || id === "nouvelle";
+    const navigationRecipe = (
+        location.state as { recipe?: Recipe } | null
+    )?.recipe;
+    const prefetchedRecipe =
+        !isCreating && navigationRecipe?.id === id ? navigationRecipe : null;
 
     const loader = useCallback(
-        () => (isCreating ? Promise.resolve(null) : fetchRecipeById(id)),
-        [id, isCreating],
+        () =>
+            isCreating
+                ? Promise.resolve(null)
+                : prefetchedRecipe
+                  ? Promise.resolve(prefetchedRecipe)
+                  : fetchRecipeById(id),
+        [id, isCreating, prefetchedRecipe],
     );
 
-    const { data, isLoading, error, reload } = useAsyncData(loader, [id]);
+    const {
+        data: loadedData,
+        isLoading: isLoadingFromDatabase,
+        error,
+        reload,
+    } = useAsyncData(loader, [id]);
+    const data = prefetchedRecipe ?? loadedData;
+    const isLoading = prefetchedRecipe ? false : isLoadingFromDatabase;
 
-    const [form, setForm] = useState<RecipeInput>(EMPTY_RECIPE);
+    const [form, setForm] = useState<RecipeInput>(() =>
+        prefetchedRecipe ? toInput(prefetchedRecipe) : EMPTY_RECIPE,
+    );
     const [submitError, setSubmitError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     // Une fois le slug modifié à la main, on arrête de le déduire du titre :
