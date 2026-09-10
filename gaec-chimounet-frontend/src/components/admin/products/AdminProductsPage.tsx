@@ -1,6 +1,9 @@
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 
-import { fetchKuupandaProducts } from "../../../api/kuupanda";
+import { describeError } from "../../../api/errors";
+import { fetchProductCatalogView } from "../../../api/kuupanda";
+import { updateProductPriceVisibility } from "../../../api/siteSettings";
 import type { CatalogProduct } from "../../../data/products/catalog.types";
 import { useAsyncData } from "../../../hooks/useAsyncData";
 import AsyncBoundary from "../shared/AsyncBoundary";
@@ -43,8 +46,34 @@ function formatStock(product: CatalogProduct): string {
 }
 
 export default function AdminProductsPage() {
-    const { data, isLoading, error, reload } = useAsyncData(fetchKuupandaProducts);
-    const products = data ?? [];
+    const { data, isLoading, error, reload } = useAsyncData(fetchProductCatalogView);
+    const [showPrices, setShowPrices] = useState(true);
+    const [isSavingVisibility, setIsSavingVisibility] = useState(false);
+    const [visibilityError, setVisibilityError] = useState<string | null>(null);
+    const products = data?.products ?? [];
+
+    useEffect(() => {
+        if (data) {
+            setShowPrices(data.showPrices);
+        }
+    }, [data]);
+
+    const handlePriceVisibility = async (nextValue: boolean) => {
+        const previousValue = showPrices;
+        setShowPrices(nextValue);
+        setIsSavingVisibility(true);
+        setVisibilityError(null);
+
+        try {
+            await updateProductPriceVisibility(nextValue);
+            reload();
+        } catch (caught) {
+            setShowPrices(previousValue);
+            setVisibilityError(describeError(caught as Error));
+        } finally {
+            setIsSavingVisibility(false);
+        }
+    };
 
     return (
         <div className="admin-page">
@@ -75,6 +104,41 @@ export default function AdminProductsPage() {
                 Une modification faite dans Kuupanda devient visible ici et sur le
                 site dans un délai maximal d’environ cinq minutes.
             </p>
+
+            <div className="admin-product-setting">
+                <div>
+                    <h2>Afficher les prix sur le site</h2>
+                    <p>
+                        Ce réglage s’applique aux produits de la page d’accueil et
+                        de la page Produits.
+                    </p>
+                </div>
+
+                <label className="admin-switch">
+                    <input
+                        type="checkbox"
+                        checked={showPrices}
+                        disabled={isLoading || isSavingVisibility}
+                        onChange={(event) =>
+                            void handlePriceVisibility(event.target.checked)
+                        }
+                    />
+                    <span className="admin-switch__track" aria-hidden="true" />
+                    <span className="admin-switch__label">
+                        {isSavingVisibility
+                            ? "Enregistrement…"
+                            : showPrices
+                              ? "Prix affichés"
+                              : "Prix masqués"}
+                    </span>
+                </label>
+            </div>
+
+            {visibilityError && (
+                <p className="admin-alert admin-alert--error" role="alert">
+                    {visibilityError}
+                </p>
+            )}
 
             <AsyncBoundary
                 isLoading={isLoading}
