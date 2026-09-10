@@ -82,7 +82,13 @@ export default function AdminLayout() {
                             {profile.fullName || profile.email}
 
                             <span className="admin-badge">
-                                {ROLE_LABELS[profile.role]}
+                                <span className="admin-label--desktop">
+                                    {ROLE_LABELS[profile.role]}
+                                </span>
+
+                                <span className="admin-label--mobile">
+                                    {profile.role === "admin" ? "Admin" : "Exploitant"}
+                                </span>
                             </span>
                         </span>
                     )}
@@ -96,7 +102,8 @@ export default function AdminLayout() {
                         className="admin-button admin-button--ghost"
                         onClick={() => void handleSignOut()}
                     >
-                        Se déconnecter
+                        <span className="admin-label--desktop">Se déconnecter</span>
+                        <span className="admin-label--mobile">Déconnexion</span>
                     </button>
                 </div>
             </header>
