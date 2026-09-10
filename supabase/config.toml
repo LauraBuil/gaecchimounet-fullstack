@@ -13,8 +13,13 @@ enabled = false
 
 [auth]
 enabled = true
-site_url = "http://localhost:5173"
-additional_redirect_urls = ["http://localhost:5173/admin/mot-de-passe"]
+site_url = "https://staging.gaecchimounet.fr"
+additional_redirect_urls = [
+  "https://staging.gaecchimounet.fr/admin/mot-de-passe",
+  "https://gaecchimounet.fr/admin/mot-de-passe",
+  "https://www.gaecchimounet.fr/admin/mot-de-passe",
+  "http://localhost:5173/admin/mot-de-passe",
+]
 enable_signup = false
 
 [storage]
