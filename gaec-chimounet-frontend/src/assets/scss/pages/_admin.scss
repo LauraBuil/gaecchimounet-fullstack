@@ -1119,6 +1119,21 @@
   }
 }
 
+.admin-recurrence {
+  &__eyebrow {
+    margin-bottom: 4px;
+    color: variables.$green-700;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .admin-form__description {
+    margin-top: 6px;
+  }
+}
+
 // ===========================================================================
 // Listes répétables : ingrédients et étapes
 // ===========================================================================

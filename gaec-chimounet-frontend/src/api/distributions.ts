@@ -75,6 +75,12 @@ function toRow(input: DistributionDateInput) {
     };
 }
 
+function addDaysToDateKey(dateKey: string, days: number): string {
+    const date = new Date(`${dateKey}T12:00:00`);
+    date.setDate(date.getDate() + days);
+    return localDateKey(date);
+}
+
 export async function createDistributionDate(
     input: DistributionDateInput,
 ): Promise<string> {
@@ -88,6 +94,36 @@ export async function createDistributionDate(
 
     invalidateAllQueries();
     return (data as { id: string }).id;
+}
+
+export async function createWeeklyDistributionDates(
+    source: DistributionDateInput,
+    untilDate: string,
+): Promise<number> {
+    const rows = [];
+    let nextDate = addDaysToDateKey(source.date, 7);
+
+    while (nextDate <= untilDate && rows.length < 52) {
+        rows.push(toRow({ ...source, date: nextDate }));
+        nextDate = addDaysToDateKey(nextDate, 7);
+    }
+
+    if (rows.length === 0) {
+        return 0;
+    }
+
+    const { data, error } = await supabase
+        .from("distribution_dates")
+        .upsert(rows, {
+            onConflict: "distribution_date",
+            ignoreDuplicates: true,
+        })
+        .select("id");
+
+    assertOk(error);
+
+    invalidateAllQueries();
+    return (data as { id: string }[] | null)?.length ?? 0;
 }
 
 export async function updateDistributionDate(
