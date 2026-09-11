@@ -957,6 +957,18 @@
     font-size: 0.78rem;
     font-style: normal;
   }
+
+  &--card {
+    padding: 14px 16px;
+    border: 1px solid rgba(variables.$green-900, 0.12);
+    border-radius: variables.$radius-small;
+    background: rgba(variables.$green-100, 0.5);
+
+    span {
+      color: variables.$green-900;
+      font-weight: 700;
+    }
+  }
 }
 
 .admin-checkbox-group {
@@ -1119,18 +1131,46 @@
   }
 }
 
-.admin-recurrence {
-  &__eyebrow {
-    margin-bottom: 4px;
-    color: variables.$green-700;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
+.admin-recurrence-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
 
-  .admin-form__description {
-    margin-top: 6px;
+.admin-recurrence-exceptions {
+  padding: 16px;
+  border: 1px solid rgba(variables.$green-900, 0.1);
+  border-radius: variables.$radius-small;
+
+  &__controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+
+    @include mixins.mobile {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.admin-exception-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 10px 8px 14px;
+    border-radius: variables.$radius-small;
+    background: rgba(variables.$earth-500, 0.1);
+    color: variables.$text-color;
+    font-size: 0.84rem;
   }
 }
 
