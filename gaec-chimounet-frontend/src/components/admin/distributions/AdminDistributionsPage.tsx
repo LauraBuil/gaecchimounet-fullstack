@@ -2,6 +2,7 @@ import { useMemo, useState, type FormEvent } from "react";
 
 import {
     createDistributionDate,
+    createWeeklyDistributionDates,
     deleteDistributionDate,
     fetchAllDistributionDates,
     formatDistributionDate,
@@ -23,6 +24,47 @@ const EMPTY_DATE: DistributionDateInput = {
     location: "",
     isPublished: true,
 };
+
+const WEEKDAY_NAMES = [
+    "dimanche",
+    "lundi",
+    "mardi",
+    "mercredi",
+    "jeudi",
+    "vendredi",
+    "samedi",
+];
+
+type RecurrenceDraft = {
+    source: DistributionDate;
+    until: string;
+};
+
+function shiftDate(
+    dateKey: string,
+    amount: number,
+    unit: "day" | "month" | "year",
+) {
+    const date = new Date(`${dateKey}T12:00:00`);
+
+    if (unit === "day") date.setDate(date.getDate() + amount);
+    if (unit === "month") date.setMonth(date.getMonth() + amount);
+    if (unit === "year") date.setFullYear(date.getFullYear() + amount);
+
+    return localDateKey(date);
+}
+
+function weeklyOccurrenceCount(sourceDate: string, untilDate: string): number {
+    let count = 0;
+    let nextDate = shiftDate(sourceDate, 7, "day");
+
+    while (nextDate <= untilDate && count < 52) {
+        count += 1;
+        nextDate = shiftDate(nextDate, 7, "day");
+    }
+
+    return count;
+}
 
 function monthCells(month: Date): Date[] {
     const firstDay = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -49,7 +91,11 @@ export default function AdminDistributionsPage() {
     const [form, setForm] = useState<DistributionDateInput>(EMPTY_DATE);
     const [formError, setFormError] = useState<string | null>(null);
     const [actionError, setActionError] = useState<string | null>(null);
+    const [actionNotice, setActionNotice] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [recurrence, setRecurrence] = useState<RecurrenceDraft | null>(null);
+    const [recurrenceError, setRecurrenceError] = useState<string | null>(null);
+    const [isCreatingRecurrence, setIsCreatingRecurrence] = useState(false);
 
     const dates = data ?? [];
     const datesByDay = useMemo(
@@ -59,12 +105,18 @@ export default function AdminDistributionsPage() {
     const cells = useMemo(() => monthCells(month), [month]);
     const today = localDateKey();
     const isFormOpen = isCreating || editingId !== null;
+    const isPanelOpen = isFormOpen || recurrence !== null;
+    const recurrenceCount = recurrence
+        ? weeklyOccurrenceCount(recurrence.source.date, recurrence.until)
+        : 0;
 
     const startCreate = (date = today) => {
         setForm({ date, location: "", isPublished: true });
         setEditingId(null);
         setIsCreating(true);
         setFormError(null);
+        setRecurrence(null);
+        setActionNotice(null);
     };
 
     const startEdit = (distribution: DistributionDate) => {
@@ -78,6 +130,20 @@ export default function AdminDistributionsPage() {
         setEditingId(distribution.id);
         setIsCreating(false);
         setFormError(null);
+        setRecurrence(null);
+        setActionNotice(null);
+    };
+
+    const startRecurrence = (distribution: DistributionDate) => {
+        setEditingId(null);
+        setIsCreating(false);
+        setRecurrence({
+            source: distribution,
+            until: shiftDate(distribution.date, 3, "month"),
+        });
+        setRecurrenceError(null);
+        setActionError(null);
+        setActionNotice(null);
     };
 
     const selectDay = (date: Date) => {
@@ -95,6 +161,11 @@ export default function AdminDistributionsPage() {
         setEditingId(null);
         setIsCreating(false);
         setFormError(null);
+    };
+
+    const closeRecurrence = () => {
+        setRecurrence(null);
+        setRecurrenceError(null);
     };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -124,12 +195,53 @@ export default function AdminDistributionsPage() {
 
     const handleDelete = async (distribution: DistributionDate) => {
         setActionError(null);
+        setActionNotice(null);
         try {
             await deleteDistributionDate(distribution.id);
             closeForm();
+            closeRecurrence();
             reload();
         } catch (caught) {
             setActionError(describeError(caught as Error));
+        }
+    };
+
+    const handleRecurrence = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!recurrence) return;
+
+        setRecurrenceError(null);
+        const minimumDate = shiftDate(recurrence.source.date, 7, "day");
+        const maximumDate = shiftDate(recurrence.source.date, 1, "year");
+
+        if (recurrence.until < minimumDate || recurrence.until > maximumDate) {
+            setRecurrenceError(
+                "Choisissez une date de fin comprise entre la semaine prochaine et un an.",
+            );
+            return;
+        }
+
+        setIsCreatingRecurrence(true);
+        try {
+            const created = await createWeeklyDistributionDates(
+                {
+                    date: recurrence.source.date,
+                    location: recurrence.source.location,
+                    isPublished: recurrence.source.isPublished,
+                },
+                recurrence.until,
+            );
+            closeRecurrence();
+            setActionNotice(
+                created === 0
+                    ? "Toutes ces dates étaient déjà enregistrées."
+                    : `${created} date${created > 1 ? "s" : ""} ajoutée${created > 1 ? "s" : ""}. Vous pouvez supprimer une semaine exceptionnelle individuellement.`,
+            );
+            reload();
+        } catch (caught) {
+            setRecurrenceError(describeError(caught as Error));
+        } finally {
+            setIsCreatingRecurrence(false);
         }
     };
 
@@ -177,6 +289,15 @@ export default function AdminDistributionsPage() {
                                 >
                                     Modifier
                                 </button>
+                                {distribution.date >= today && (
+                                    <button
+                                        type="button"
+                                        className="admin-button"
+                                        onClick={() => startRecurrence(distribution)}
+                                    >
+                                        Répéter
+                                    </button>
+                                )}
                                 <ConfirmButton
                                     label="Supprimer"
                                     confirmLabel="Oui, supprimer"
@@ -202,7 +323,7 @@ export default function AdminDistributionsPage() {
                     </p>
                 </div>
 
-                {!isFormOpen && (
+                {!isPanelOpen && (
                     <button
                         type="button"
                         className="button button--primary"
@@ -219,10 +340,16 @@ export default function AdminDistributionsPage() {
                 </p>
             )}
 
+            {actionNotice && (
+                <p className="admin-alert admin-alert--success" role="status">
+                    {actionNotice}
+                </p>
+            )}
+
             <div
                 className={[
                     "admin-distribution-workspace",
-                    isFormOpen ? "admin-distribution-workspace--editing" : "",
+                    isPanelOpen ? "admin-distribution-workspace--editing" : "",
                 ].filter(Boolean).join(" ")}
             >
                 {isFormOpen && (
@@ -306,6 +433,84 @@ export default function AdminDistributionsPage() {
                             Annuler
                         </button>
                     </div>
+                    </form>
+                )}
+
+
+                {recurrence && (
+                    <form
+                        className="admin-form admin-form--inline admin-recurrence"
+                        onSubmit={handleRecurrence}
+                    >
+                        <div>
+                            <p className="admin-recurrence__eyebrow">
+                                Récurrence hebdomadaire
+                            </p>
+                            <h2>
+                                Tous les {WEEKDAY_NAMES[
+                                    new Date(`${recurrence.source.date}T12:00:00`).getDay()
+                                ]}s
+                            </h2>
+                            <p className="admin-form__description">
+                                À partir du {formatDistributionDate(recurrence.source.date)}
+                                {recurrence.source.location
+                                    ? ` · ${recurrence.source.location}`
+                                    : ""}
+                            </p>
+                        </div>
+
+                        <div className="admin-field">
+                            <label htmlFor="distribution-recurrence-until">
+                                Répéter jusqu’au
+                            </label>
+                            <input
+                                id="distribution-recurrence-until"
+                                type="date"
+                                required
+                                min={shiftDate(recurrence.source.date, 7, "day")}
+                                max={shiftDate(recurrence.source.date, 1, "year")}
+                                value={recurrence.until}
+                                onChange={(event) =>
+                                    setRecurrence((current) =>
+                                        current
+                                            ? { ...current, until: event.target.value }
+                                            : current,
+                                    )
+                                }
+                            />
+                            <p className="admin-field__hint">
+                                {recurrenceCount} nouvelle
+                                {recurrenceCount > 1 ? "s" : ""} date
+                                {recurrenceCount > 1 ? "s" : ""} prévue
+                                {recurrenceCount > 1 ? "s" : ""}. Les dates déjà
+                                présentes seront ignorées.
+                            </p>
+                        </div>
+
+                        {recurrenceError && (
+                            <p className="admin-alert admin-alert--error" role="alert">
+                                {recurrenceError}
+                            </p>
+                        )}
+
+                        <div className="admin-form__actions">
+                            <button
+                                type="submit"
+                                className="button button--primary"
+                                disabled={isCreatingRecurrence}
+                            >
+                                {isCreatingRecurrence
+                                    ? "Création…"
+                                    : "Créer les dates"}
+                            </button>
+                            <button
+                                type="button"
+                                className="admin-button admin-button--ghost"
+                                onClick={closeRecurrence}
+                            >
+                                Annuler
+                            </button>
+                        </div>
                     </form>
                 )}
 
