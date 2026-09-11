@@ -1,0 +1,1 @@
+import"./rolldown-runtime-CbXtAM7H.js";import{r as e,t}from"./react-blWa-pWN.js";e();var n=t(),r=({email:e,className:t})=>(0,n.jsx)(`a`,{className:t,href:`mailto:${e}`,children:e});export{r as t};

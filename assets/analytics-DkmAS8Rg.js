@@ -1,0 +1,1 @@
+import{n as e,s as t}from"./index-Bv9u_9Kf.js";async function n(){let{data:n,error:r}=await t.rpc(`get_audience_stats`,{p_days:30});return e(r),n}export{n as t};

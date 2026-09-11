@@ -1,0 +1,1 @@
+function e(e){return e.normalize(`NFD`).replace(/\p{M}/gu,``)}function t(t){return e(t).toLowerCase().trim()}function n(e){return t(e).replace(/[^a-z0-9]+/g,`-`).replace(/^-+|-+$/g,``)}export{n,t};
