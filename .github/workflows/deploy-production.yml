@@ -1,0 +1,64 @@
+name: Publier le site en production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    name: Compiler et préparer la production Hostinger
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://gaecchimounet.fr
+
+    steps:
+      - name: Récupérer le projet
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Préparer Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: gaec-chimounet-frontend/package-lock.json
+
+      - name: Installer les dépendances
+        working-directory: gaec-chimounet-frontend
+        run: npm ci
+
+      - name: Compiler le site de production
+        working-directory: gaec-chimounet-frontend
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      - name: Publier les fichiers compilés
+        run: |
+          set -euo pipefail
+
+          publish_dir="$(mktemp -d)"
+          cp -a gaec-chimounet-frontend/dist/. "$publish_dir/"
+          cd "$publish_dir"
+
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$DEPLOY_BRANCH"
+          git add --all
+          git commit -m "Deploy production from ${GITHUB_SHA}"
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin "$DEPLOY_BRANCH"
+        env:
+          DEPLOY_BRANCH: hostinger-production
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
