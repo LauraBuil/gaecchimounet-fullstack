@@ -1,0 +1,1 @@
+var e=[`spring`,`summer`,`autumn`,`winter`],t={spring:`Printemps`,summer:`Été`,autumn:`Automne`,winter:`Hiver`};export{t as n,e as t};
