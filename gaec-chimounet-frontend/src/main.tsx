@@ -8,13 +8,13 @@ import './assets/scss/index.scss'
 
 // Site public
 import App from './App.tsx'
+import HomePage from './components/pages/HomePage.tsx'
 
 // Authentification
 import AuthProvider from './features/auth/AuthProvider.tsx'
 import RequireRole from './features/auth/RequireRole.tsx'
 
 // Espace de gestion
-const HomePage = lazy(() => import('./components/pages/HomePage.tsx'))
 const LegalMentions = lazy(() => import('./components/pages/LegalMentions.tsx'))
 const Contact = lazy(() => import('./components/pages/Contact.tsx'))
 const Gallery = lazy(() => import('./components/pages/Gallery.tsx'))

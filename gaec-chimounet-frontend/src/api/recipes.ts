@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import type {
     Recipe,
     RecipeInput,
+    RecipePreview,
     Season,
 } from "../data/recipes/recipes.types";
 import { assertOk } from "./errors";
@@ -17,6 +18,17 @@ const RECIPE_SELECT = `
     servings, image_path, image_alt, tips, is_published, position,
     recipe_ingredients (id, quantity, name, position),
     recipe_steps (id, description, position)
+`;
+
+const RECIPE_PREVIEW_SELECT = `
+    id, title, slug, season, summary, category, duration_in_minutes,
+    image_path, image_alt, is_published, position,
+    recipe_ingredients (id, quantity, name, position)
+`;
+
+const FEATURED_RECIPE_SELECT = `
+    id, title, slug, season, summary, category, duration_in_minutes,
+    image_path, image_alt, is_published, position
 `;
 
 type RecipeRow = {
@@ -46,6 +58,23 @@ type RecipeRow = {
         description: string;
         position: number;
     }[];
+};
+
+type RecipePreviewRow = Pick<
+    RecipeRow,
+    | "id"
+    | "title"
+    | "slug"
+    | "season"
+    | "summary"
+    | "category"
+    | "duration_in_minutes"
+    | "image_path"
+    | "image_alt"
+    | "is_published"
+    | "position"
+> & {
+    recipe_ingredients?: RecipeRow["recipe_ingredients"];
 };
 
 function byPosition<T extends { position: number }>(a: T, b: T): number {
@@ -79,22 +108,57 @@ function toRecipe(row: RecipeRow): Recipe {
     };
 }
 
+function toRecipePreview(row: RecipePreviewRow): RecipePreview {
+    return {
+        id: row.id,
+        title: row.title,
+        slug: row.slug,
+        season: row.season,
+        summary: row.summary,
+        category: row.category,
+        durationInMinutes: row.duration_in_minutes,
+        imageUrl: mediaUrl(row.image_path),
+        imagePath: row.image_path,
+        imageAlt: row.image_alt,
+        isPublished: row.is_published,
+        position: row.position,
+        ingredients: [...(row.recipe_ingredients ?? [])]
+            .sort(byPosition)
+            .map(({ id, quantity, name }) => ({ id, quantity, name })),
+    };
+}
+
 /**
  * Recettes destinées au site public.
  * RLS filtre déjà les brouillons pour un visiteur, mais le staff connecté
  * verrait ses brouillons apparaître sur le site public sans ce `eq`.
  */
-export async function fetchPublishedRecipes(): Promise<Recipe[]> {
+export async function fetchPublishedRecipes(): Promise<RecipePreview[]> {
     const { data, error } = await supabase
         .from("recipes")
-        .select(RECIPE_SELECT)
+        .select(RECIPE_PREVIEW_SELECT)
         .eq("is_published", true)
         .order("position")
         .order("created_at", { ascending: false });
 
     assertOk(error);
 
-    return (data as RecipeRow[] | null)?.map(toRecipe) ?? [];
+    return (data as RecipePreviewRow[] | null)?.map(toRecipePreview) ?? [];
+}
+
+/** Trois cartes seulement pour l'accueil, sans étapes ni ingrédients. */
+export async function fetchFeaturedRecipes(): Promise<RecipePreview[]> {
+    const { data, error } = await supabase
+        .from("recipes")
+        .select(FEATURED_RECIPE_SELECT)
+        .eq("is_published", true)
+        .order("position")
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+    assertOk(error);
+
+    return (data as RecipePreviewRow[] | null)?.map(toRecipePreview) ?? [];
 }
 
 /** Recettes du back-office : brouillons inclus. */

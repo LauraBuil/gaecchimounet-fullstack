@@ -54,6 +54,8 @@ export default function ProductCard({ product, showPrice }: ProductCardProps) {
                         src={product.imageUrl}
                         alt={product.name}
                         loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
                     />
                 ) : (
                     <div className="product-card__image-placeholder" aria-hidden="true" />

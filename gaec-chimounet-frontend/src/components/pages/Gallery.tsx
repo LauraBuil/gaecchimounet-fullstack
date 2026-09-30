@@ -5,14 +5,18 @@ import { fetchPublishedGalleryImages } from "../../api/gallery";
 import type { GalleryImage } from "../../data/gallery/gallery.types";
 import { useAsyncData } from "../../hooks/useAsyncData";
 
+const GALLERY_PAGE_SIZE = 18;
+
 export default function GalleryPage() {
     const { data, isLoading, error, reload } = useAsyncData(
         fetchPublishedGalleryImages,
     );
 
     const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+    const [visibleCount, setVisibleCount] = useState(GALLERY_PAGE_SIZE);
 
     const images = data ?? [];
+    const visibleImages = images.slice(0, visibleCount);
 
     useEffect(() => {
         if (!selectedImage) {
@@ -80,7 +84,7 @@ export default function GalleryPage() {
 
                     {images.length > 0 && (
                         <div className="gallery-grid">
-                            {images.map((image) => (
+                            {visibleImages.map((image, index) => (
                                 <button
                                     key={image.id}
                                     type="button"
@@ -92,11 +96,27 @@ export default function GalleryPage() {
                                         className="gallery-card__image"
                                         src={image.url}
                                         alt={image.alt}
-                                        loading="lazy"
+                                        loading={index < 4 ? "eager" : "lazy"}
+                                        decoding="async"
+                                        fetchPriority={index === 0 ? "high" : "low"}
                                     />
                                     <span className="gallery-card__overlay" />
                                 </button>
                             ))}
+                        </div>
+                    )}
+
+                    {visibleCount < images.length && (
+                        <div className="gallery-load-more">
+                            <button
+                                type="button"
+                                className="button button--primary"
+                                onClick={() =>
+                                    setVisibleCount((count) => count + GALLERY_PAGE_SIZE)
+                                }
+                            >
+                                Afficher plus de photos
+                            </button>
                         </div>
                     )}
                 </div>
@@ -127,6 +147,7 @@ export default function GalleryPage() {
                             className="image-popup__image"
                             src={selectedImage.url}
                             alt={selectedImage.alt}
+                            decoding="async"
                         />
 
                         <p className="image-popup__caption">{selectedImage.alt}</p>

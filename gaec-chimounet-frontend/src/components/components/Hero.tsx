@@ -30,6 +30,8 @@ export default function Hero() {
                 src={heroImage}
                 alt=""
                 aria-hidden="true"
+                decoding="async"
+                fetchPriority="high"
             />
 
             <div className="hero__overlay" aria-hidden="true" />
@@ -86,6 +88,7 @@ export default function Hero() {
                                 className={`hero__certification-image ${certification.className}`}
                                 src={certification.src}
                                 alt={certification.alt}
+                                decoding="async"
                             />
                         ))}
                     </div>

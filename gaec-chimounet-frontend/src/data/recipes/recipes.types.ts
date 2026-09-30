@@ -34,6 +34,24 @@ export type Recipe = {
     tips?: string;
 };
 
+/** Données légères nécessaires aux cartes et aux filtres du site public. */
+export type RecipePreview = Pick<
+    Recipe,
+    | "id"
+    | "title"
+    | "slug"
+    | "season"
+    | "summary"
+    | "category"
+    | "durationInMinutes"
+    | "imageUrl"
+    | "imagePath"
+    | "imageAlt"
+    | "isPublished"
+    | "position"
+    | "ingredients"
+>;
+
 /** Ce que le formulaire d'administration envoie : ni identifiants, ni champs calculés. */
 export type RecipeInput = {
     title: string;

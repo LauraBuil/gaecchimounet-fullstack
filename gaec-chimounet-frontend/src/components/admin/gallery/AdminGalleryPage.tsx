@@ -238,6 +238,8 @@ export default function AdminGalleryPage() {
                                 src={image.url}
                                 alt={image.alt || "Photo sans description"}
                                 loading="lazy"
+                                decoding="async"
+                                fetchPriority="low"
                             />
 
                             <div className="admin-gallery__body">

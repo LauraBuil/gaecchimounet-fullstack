@@ -5,7 +5,10 @@ type CacheEntry = {
     expiresAt: number;
 };
 
-const CACHE_DURATION_IN_MS = 60_000;
+// Les données publiques changent peu et toutes les mutations du back-office
+// invalident explicitement ce cache. Cinq minutes rendent les retours entre
+// pages instantanés sans masquer une modification enregistrée.
+const CACHE_DURATION_IN_MS = 5 * 60_000;
 const cache = new Map<QueryLoader<unknown>, CacheEntry>();
 const pending = new Map<QueryLoader<unknown>, Promise<unknown>>();
 let cacheGeneration = 0;

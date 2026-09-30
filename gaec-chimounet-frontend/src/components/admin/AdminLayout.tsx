@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router";
 
 import { fetchAllDistributionDates } from "../../api/distributions";
@@ -16,15 +16,24 @@ const NAV_ITEMS: {
     to: string;
     label: string;
     adminOnly?: boolean;
+    preload?: QueryLoader<unknown>;
 }[] = [
     { to: "/admin", label: "Tableau de bord" },
-    { to: "/admin/recettes", label: "Recettes" },
-    { to: "/admin/galerie", label: "Galerie photos" },
-    { to: "/admin/produits", label: "Produits" },
-    { to: "/admin/points-de-distribution", label: "Points de distribution" },
-    { to: "/admin/distributions", label: "Calendrier des distributions" },
-    { to: "/admin/statistiques", label: "Statistiques de visites" },
-    { to: "/admin/utilisateurs", label: "Utilisateurs", adminOnly: true },
+    { to: "/admin/recettes", label: "Recettes", preload: fetchAllRecipes },
+    { to: "/admin/galerie", label: "Galerie photos", preload: fetchAllGalleryImages },
+    { to: "/admin/produits", label: "Produits", preload: fetchAllProducts },
+    {
+        to: "/admin/points-de-distribution",
+        label: "Points de distribution",
+        preload: fetchAllMeetingPoints,
+    },
+    {
+        to: "/admin/distributions",
+        label: "Calendrier des distributions",
+        preload: fetchAllDistributionDates,
+    },
+    { to: "/admin/statistiques", label: "Statistiques de visites", preload: fetchAudienceStats },
+    { to: "/admin/utilisateurs", label: "Utilisateurs", adminOnly: true, preload: fetchStaffMembers },
 ];
 
 export default function AdminLayout() {
@@ -38,24 +47,6 @@ export default function AdminLayout() {
     };
 
     const visibleItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
-
-    useEffect(() => {
-        const timeout = window.setTimeout(() => {
-            const loaders: QueryLoader<unknown>[] = [
-                fetchAllRecipes,
-                fetchAllGalleryImages,
-                fetchAllProducts,
-                fetchAllMeetingPoints,
-                fetchAllDistributionDates,
-                fetchAudienceStats,
-                ...(isAdmin ? [fetchStaffMembers] : []),
-            ];
-
-            void Promise.allSettled(loaders.map((loader) => preloadQuery(loader)));
-        }, 250);
-
-        return () => window.clearTimeout(timeout);
-    }, [isAdmin]);
 
     return (
         <div className="admin-shell">
@@ -139,6 +130,12 @@ export default function AdminLayout() {
                                             .join(" ")
                                     }
                                     onClick={() => setIsMenuOpen(false)}
+                                    onPointerEnter={() => {
+                                        if (item.preload) void preloadQuery(item.preload);
+                                    }}
+                                    onFocus={() => {
+                                        if (item.preload) void preloadQuery(item.preload);
+                                    }}
                                 >
                                     {item.label}
                                 </NavLink>

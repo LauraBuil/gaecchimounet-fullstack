@@ -108,8 +108,8 @@ export default function ImageUploadField({
             </div>
 
             <p className="admin-field__hint">
-                WebP, JPEG, PNG ou AVIF, 10 Mo maximum. Le format WebP est
-                recommandé : il divise le poids par deux à qualité égale.
+                WebP, JPEG, PNG ou AVIF, 10 Mo maximum. La photo est
+                automatiquement redimensionnée et optimisée en WebP avant l’envoi.
             </p>
 
             {error && (

@@ -1,9 +1,9 @@
 import { Link } from "react-router";
 
-import type { Recipe } from "../../data/recipes/recipes.types";
+import type { RecipePreview } from "../../data/recipes/recipes.types";
 
 type RecipeCardProps = {
-    recipe: Recipe;
+    recipe: RecipePreview;
 };
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
@@ -19,6 +19,8 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
                     src={recipe.imageUrl}
                     alt={recipe.imageAlt}
                     loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
                 />
             </Link>
 

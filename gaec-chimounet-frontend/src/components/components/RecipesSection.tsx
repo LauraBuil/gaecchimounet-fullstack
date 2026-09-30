@@ -1,9 +1,9 @@
-import { fetchPublishedRecipes } from "../../api/recipes";
+import { fetchFeaturedRecipes } from "../../api/recipes";
 import { useAsyncData } from "../../hooks/useAsyncData";
 import RecipeCard from "./RecipeCard";
 
 export default function RecipesSection() {
-    const { data, isLoading, error } = useAsyncData(fetchPublishedRecipes);
+    const { data, isLoading, error } = useAsyncData(fetchFeaturedRecipes);
 
     const recipes = data ?? [];
 
@@ -43,7 +43,7 @@ export default function RecipesSection() {
 
                 {!isLoading && !error && (
                     <div className="recipes-section__grid">
-                        {recipes.slice(0, 3).map((recipe) => (
+                        {recipes.map((recipe) => (
                             <RecipeCard key={recipe.id} recipe={recipe} />
                         ))}
                     </div>
