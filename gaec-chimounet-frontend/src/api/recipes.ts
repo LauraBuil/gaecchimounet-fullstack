@@ -207,17 +207,20 @@ export async function fetchFeaturedRecipes(): Promise<RecipePreview[]> {
     return recipes;
 }
 
-/** Recettes du back-office : brouillons inclus. */
-export async function fetchAllRecipes(): Promise<Recipe[]> {
+/**
+ * Liste légère du back-office : brouillons inclus, détails chargés uniquement
+ * lorsque l'utilisateur ouvre le formulaire d'une recette.
+ */
+export async function fetchAllRecipes(): Promise<RecipePreview[]> {
     const { data, error } = await supabase
         .from("recipes")
-        .select(RECIPE_SELECT)
+        .select(FEATURED_RECIPE_SELECT)
         .order("position")
         .order("created_at", { ascending: false });
 
     assertOk(error);
 
-    return (data as RecipeRow[] | null)?.map(toRecipe) ?? [];
+    return (data as RecipePreviewRow[] | null)?.map(toRecipePreview) ?? [];
 }
 
 export async function fetchRecipeBySlug(slug: string): Promise<Recipe | null> {
@@ -299,7 +302,9 @@ export async function updateRecipe(
  * La photo part en dernier : si la suppression en base échoue, on ne veut pas
  * avoir déjà détruit l'image d'une recette toujours en ligne.
  */
-export async function deleteRecipe(recipe: Recipe): Promise<void> {
+export async function deleteRecipe(
+    recipe: Pick<Recipe, "id" | "imagePath">,
+): Promise<void> {
     const { error } = await supabase.from("recipes").delete().eq("id", recipe.id);
 
     assertOk(error);

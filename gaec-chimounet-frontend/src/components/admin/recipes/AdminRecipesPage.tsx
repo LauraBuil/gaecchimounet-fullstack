@@ -7,7 +7,7 @@ import {
     fetchAllRecipes,
     setRecipePublished,
 } from "../../../api/recipes";
-import type { Recipe } from "../../../data/recipes/recipes.types";
+import type { RecipePreview } from "../../../data/recipes/recipes.types";
 import { SEASON_LABELS } from "../../../data/recipes/recipes.types";
 import { useAsyncData } from "../../../hooks/useAsyncData";
 import AsyncBoundary from "../shared/AsyncBoundary";
@@ -26,7 +26,7 @@ export default function AdminRecipesPage() {
         void import("./AdminRecipeFormPage");
     }, []);
 
-    const handleTogglePublished = async (recipe: Recipe) => {
+    const handleTogglePublished = async (recipe: RecipePreview) => {
         setActionError(null);
 
         try {
@@ -37,7 +37,7 @@ export default function AdminRecipesPage() {
         }
     };
 
-    const handleDelete = async (recipe: Recipe) => {
+    const handleDelete = async (recipe: RecipePreview) => {
         setActionError(null);
 
         try {
@@ -104,12 +104,6 @@ export default function AdminRecipesPage() {
                                     {recipe.category && ` · ${recipe.category}`}
                                     {" · "}
                                     {recipe.durationInMinutes} min
-                                    {" · "}
-                                    {recipe.ingredients.length} ingrédient
-                                    {recipe.ingredients.length > 1 ? "s" : ""}
-                                    {" · "}
-                                    {recipe.steps.length} étape
-                                    {recipe.steps.length > 1 ? "s" : ""}
                                 </p>
 
                                 <p className="admin-list__summary">{recipe.summary}</p>
@@ -119,7 +113,6 @@ export default function AdminRecipesPage() {
                                 <Link
                                     className="admin-button"
                                     to={`/admin/recettes/${recipe.id}`}
-                                    state={{ recipe }}
                                 >
                                     Modifier
                                 </Link>
