@@ -1,0 +1,18 @@
+Options -MultiViews
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(avif|gif|jpe?g|png|svg|webp)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+RewriteEngine On
+RewriteBase /
+
+# Sert les fichiers et dossiers existants normalement.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# React Router prend en charge toutes les autres adresses.
+RewriteRule ^ index.html [L]
