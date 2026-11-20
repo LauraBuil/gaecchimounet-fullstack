@@ -9,6 +9,7 @@ import { useAsyncData } from "../../hooks/useAsyncData";
 import RecipeCard from "../components/RecipeCard";
 
 type SeasonFilter = "toutes" | Season;
+const RECIPE_PAGE_SIZE = 12;
 
 const seasonFilters: { label: string; value: SeasonFilter }[] = [
     { label: "Toutes", value: "toutes" },
@@ -23,6 +24,7 @@ export default function Recipy() {
 
     const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>("toutes");
     const [ingredientSearch, setIngredientSearch] = useState("");
+    const [visibleCount, setVisibleCount] = useState(RECIPE_PAGE_SIZE);
 
     const recipes = useMemo(() => data ?? [], [data]);
 
@@ -33,9 +35,7 @@ export default function Recipy() {
             const matchesSeason =
                 selectedSeason === "toutes" || recipe.season === selectedSeason;
 
-            const searchableIngredients = recipe.ingredients
-                .map((ingredient) => ingredient.name)
-                .join(" ");
+            const searchableIngredients = recipe.ingredientNames.join(" ");
 
             const searchableText = normalizeText(
                 `${recipe.title} ${searchableIngredients}`,
@@ -49,9 +49,12 @@ export default function Recipy() {
         });
     }, [recipes, selectedSeason, ingredientSearch]);
 
+    const visibleRecipes = filteredRecipes.slice(0, visibleCount);
+
     const resetFilters = () => {
         setSelectedSeason("toutes");
         setIngredientSearch("");
+        setVisibleCount(RECIPE_PAGE_SIZE);
     };
 
     return (
@@ -131,9 +134,10 @@ export default function Recipy() {
                                                 aria-pressed={
                                                     selectedSeason === season.value
                                                 }
-                                                onClick={() =>
-                                                    setSelectedSeason(season.value)
-                                                }
+                                                onClick={() => {
+                                                    setSelectedSeason(season.value);
+                                                    setVisibleCount(RECIPE_PAGE_SIZE);
+                                                }}
                                             >
                                                 {season.label}
                                             </button>
@@ -156,9 +160,10 @@ export default function Recipy() {
                                             type="search"
                                             value={ingredientSearch}
                                             placeholder="Tomate, courgette, carotte…"
-                                            onChange={(event) =>
-                                                setIngredientSearch(event.target.value)
-                                            }
+                                            onChange={(event) => {
+                                                setIngredientSearch(event.target.value);
+                                                setVisibleCount(RECIPE_PAGE_SIZE);
+                                            }}
                                         />
 
                                         {ingredientSearch && (
@@ -166,7 +171,10 @@ export default function Recipy() {
                                                 type="button"
                                                 className="recipe-filters__clear"
                                                 aria-label="Effacer la recherche"
-                                                onClick={() => setIngredientSearch("")}
+                                                onClick={() => {
+                                                    setIngredientSearch("");
+                                                    setVisibleCount(RECIPE_PAGE_SIZE);
+                                                }}
                                             >
                                                 <XMarkIcon />
                                             </button>
@@ -196,7 +204,7 @@ export default function Recipy() {
 
                             {filteredRecipes.length > 0 ? (
                                 <div className="recipes-list__grid">
-                                    {filteredRecipes.map((recipe) => (
+                                    {visibleRecipes.map((recipe) => (
                                         <RecipeCard key={recipe.id} recipe={recipe} />
                                     ))}
                                 </div>
@@ -212,6 +220,22 @@ export default function Recipy() {
                                         onClick={resetFilters}
                                     >
                                         Voir toutes les recettes
+                                    </button>
+                                </div>
+                            )}
+
+                            {visibleCount < filteredRecipes.length && (
+                                <div className="recipes-list__load-more">
+                                    <button
+                                        type="button"
+                                        className="button button--primary"
+                                        onClick={() =>
+                                            setVisibleCount(
+                                                (count) => count + RECIPE_PAGE_SIZE,
+                                            )
+                                        }
+                                    >
+                                        Afficher plus de recettes
                                     </button>
                                 </div>
                             )}

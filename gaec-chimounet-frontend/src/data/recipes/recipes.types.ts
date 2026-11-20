@@ -49,8 +49,9 @@ export type RecipePreview = Pick<
     | "imageAlt"
     | "isPublished"
     | "position"
-    | "ingredients"
->;
+> & {
+    ingredientNames: string[];
+};
 
 /** Ce que le formulaire d'administration envoie : ni identifiants, ni champs calculés. */
 export type RecipeInput = {

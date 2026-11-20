@@ -1,5 +1,10 @@
 import { mediaUrl } from "../lib/media";
 import { invalidateAllQueries } from "../lib/queryCache";
+import {
+    readPersistentCache,
+    removePersistentCache,
+    writePersistentCache,
+} from "../lib/persistentCache";
 import { supabase } from "../lib/supabase";
 import type {
     Recipe,
@@ -23,7 +28,7 @@ const RECIPE_SELECT = `
 const RECIPE_PREVIEW_SELECT = `
     id, title, slug, season, summary, category, duration_in_minutes,
     image_path, image_alt, is_published, position,
-    recipe_ingredients (id, quantity, name, position)
+    recipe_ingredients (name, position)
 `;
 
 const FEATURED_RECIPE_SELECT = `
@@ -74,8 +79,12 @@ type RecipePreviewRow = Pick<
     | "is_published"
     | "position"
 > & {
-    recipe_ingredients?: RecipeRow["recipe_ingredients"];
+    recipe_ingredients?: { name: string; position: number }[];
 };
+
+const RECIPE_PREVIEWS_CACHE_KEY = "gaec-chimounet:recipe-previews:v2";
+const FEATURED_RECIPES_CACHE_KEY = "gaec-chimounet:featured-recipes:v2";
+const PUBLIC_RECIPE_CACHE_DURATION_MS = 5 * 60_000;
 
 function byPosition<T extends { position: number }>(a: T, b: T): number {
     return a.position - b.position;
@@ -122,10 +131,17 @@ function toRecipePreview(row: RecipePreviewRow): RecipePreview {
         imageAlt: row.image_alt,
         isPublished: row.is_published,
         position: row.position,
-        ingredients: [...(row.recipe_ingredients ?? [])]
+        ingredientNames: [...(row.recipe_ingredients ?? [])]
             .sort(byPosition)
-            .map(({ id, quantity, name }) => ({ id, quantity, name })),
+            .map(({ name }) => name),
     };
+}
+
+function invalidatePublicRecipeCache(): void {
+    removePersistentCache(
+        RECIPE_PREVIEWS_CACHE_KEY,
+        FEATURED_RECIPES_CACHE_KEY,
+    );
 }
 
 /**
@@ -134,6 +150,12 @@ function toRecipePreview(row: RecipePreviewRow): RecipePreview {
  * verrait ses brouillons apparaître sur le site public sans ce `eq`.
  */
 export async function fetchPublishedRecipes(): Promise<RecipePreview[]> {
+    const cached = readPersistentCache<RecipePreview[]>(
+        RECIPE_PREVIEWS_CACHE_KEY,
+    );
+
+    if (cached) return cached;
+
     const { data, error } = await supabase
         .from("recipes")
         .select(RECIPE_PREVIEW_SELECT)
@@ -143,11 +165,29 @@ export async function fetchPublishedRecipes(): Promise<RecipePreview[]> {
 
     assertOk(error);
 
-    return (data as RecipePreviewRow[] | null)?.map(toRecipePreview) ?? [];
+    const recipes = (data as RecipePreviewRow[] | null)?.map(toRecipePreview) ?? [];
+    writePersistentCache(
+        RECIPE_PREVIEWS_CACHE_KEY,
+        recipes,
+        PUBLIC_RECIPE_CACHE_DURATION_MS,
+    );
+    return recipes;
 }
 
 /** Trois cartes seulement pour l'accueil, sans étapes ni ingrédients. */
 export async function fetchFeaturedRecipes(): Promise<RecipePreview[]> {
+    const cachedPreviews = readPersistentCache<RecipePreview[]>(
+        RECIPE_PREVIEWS_CACHE_KEY,
+    );
+
+    if (cachedPreviews) return cachedPreviews.slice(0, 3);
+
+    const cachedFeatured = readPersistentCache<RecipePreview[]>(
+        FEATURED_RECIPES_CACHE_KEY,
+    );
+
+    if (cachedFeatured) return cachedFeatured;
+
     const { data, error } = await supabase
         .from("recipes")
         .select(FEATURED_RECIPE_SELECT)
@@ -158,7 +198,13 @@ export async function fetchFeaturedRecipes(): Promise<RecipePreview[]> {
 
     assertOk(error);
 
-    return (data as RecipePreviewRow[] | null)?.map(toRecipePreview) ?? [];
+    const recipes = (data as RecipePreviewRow[] | null)?.map(toRecipePreview) ?? [];
+    writePersistentCache(
+        FEATURED_RECIPES_CACHE_KEY,
+        recipes,
+        PUBLIC_RECIPE_CACHE_DURATION_MS,
+    );
+    return recipes;
 }
 
 /** Recettes du back-office : brouillons inclus. */
@@ -227,6 +273,7 @@ export async function createRecipe(input: RecipeInput): Promise<string> {
 
     assertOk(error);
 
+    invalidatePublicRecipeCache();
     invalidateAllQueries();
 
     return data as string;
@@ -243,6 +290,7 @@ export async function updateRecipe(
 
     assertOk(error);
 
+    invalidatePublicRecipeCache();
     invalidateAllQueries();
 }
 
@@ -256,6 +304,7 @@ export async function deleteRecipe(recipe: Recipe): Promise<void> {
 
     assertOk(error);
 
+    invalidatePublicRecipeCache();
     invalidateAllQueries();
 
     await removeMedia(recipe.imagePath);
@@ -272,5 +321,6 @@ export async function setRecipePublished(
 
     assertOk(error);
 
+    invalidatePublicRecipeCache();
     invalidateAllQueries();
 }

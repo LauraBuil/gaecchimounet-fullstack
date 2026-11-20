@@ -1,11 +1,18 @@
 import type { GalleryImage } from "../data/gallery/gallery.types";
 import { mediaUrl } from "../lib/media";
+import {
+    readPersistentCache,
+    removePersistentCache,
+    writePersistentCache,
+} from "../lib/persistentCache";
 import { invalidateAllQueries } from "../lib/queryCache";
 import { supabase } from "../lib/supabase";
 import { assertOk } from "./errors";
 import { removeMedia, uploadMedia } from "./media";
 
 const GALLERY_SELECT = "id, storage_path, alt, is_published, position";
+const PUBLIC_GALLERY_CACHE_KEY = "gaec-chimounet:gallery:v1";
+const PUBLIC_GALLERY_CACHE_DURATION_MS = 5 * 60_000;
 
 type GalleryRow = {
     id: string;
@@ -26,7 +33,15 @@ function toGalleryImage(row: GalleryRow): GalleryImage {
     };
 }
 
+function invalidatePublicGalleryCache(): void {
+    removePersistentCache(PUBLIC_GALLERY_CACHE_KEY);
+}
+
 export async function fetchPublishedGalleryImages(): Promise<GalleryImage[]> {
+    const cached = readPersistentCache<GalleryImage[]>(PUBLIC_GALLERY_CACHE_KEY);
+
+    if (cached) return cached;
+
     const { data, error } = await supabase
         .from("gallery_images")
         .select(GALLERY_SELECT)
@@ -36,7 +51,13 @@ export async function fetchPublishedGalleryImages(): Promise<GalleryImage[]> {
 
     assertOk(error);
 
-    return (data as GalleryRow[] | null)?.map(toGalleryImage) ?? [];
+    const images = (data as GalleryRow[] | null)?.map(toGalleryImage) ?? [];
+    writePersistentCache(
+        PUBLIC_GALLERY_CACHE_KEY,
+        images,
+        PUBLIC_GALLERY_CACHE_DURATION_MS,
+    );
+    return images;
 }
 
 export async function fetchAllGalleryImages(): Promise<GalleryImage[]> {
@@ -80,6 +101,7 @@ export async function addGalleryImage(
         assertOk(error);
     }
 
+    invalidatePublicGalleryCache();
     invalidateAllQueries();
 
     return toGalleryImage(data as GalleryRow);
@@ -114,6 +136,7 @@ export async function updateGalleryImage(
 
     assertOk(error);
 
+    invalidatePublicGalleryCache();
     invalidateAllQueries();
 }
 
@@ -125,6 +148,7 @@ export async function deleteGalleryImage(image: GalleryImage): Promise<void> {
 
     assertOk(error);
 
+    invalidatePublicGalleryCache();
     invalidateAllQueries();
 
     await removeMedia(image.storagePath);
@@ -146,5 +170,6 @@ export async function reorderGalleryImages(
         assertOk(failure.error);
     }
 
+    invalidatePublicGalleryCache();
     invalidateAllQueries();
 }
