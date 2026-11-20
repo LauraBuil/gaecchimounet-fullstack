@@ -1,0 +1,1 @@
+import{n as e}from"./supabase-D4bmJyqX.js";import{t}from"./errors-BC1gEPMC.js";async function n(){let{data:n,error:r}=await e.rpc(`get_audience_stats`,{p_days:30});return t(r),n}export{n as t};
