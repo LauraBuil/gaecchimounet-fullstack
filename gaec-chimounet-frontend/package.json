@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "seed:supabase": "node scripts/seed-supabase.mjs",
     "seed:supabase:login": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/seed-supabase-login.ps1",
-    "verify:supabase": "node scripts/verify-supabase.mjs"
+    "verify:supabase": "node scripts/verify-supabase.mjs",
+    "smoke:staging": "node scripts/smoke-site.mjs https://staging.gaecchimounet.fr",
+    "smoke:production": "node scripts/smoke-site.mjs https://gaecchimounet.fr"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

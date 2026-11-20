@@ -36,6 +36,13 @@ jobs:
         working-directory: gaec-chimounet-frontend
         run: npm ci
 
+      - name: Vérifier la connexion et les droits Supabase
+        working-directory: gaec-chimounet-frontend
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: npm run verify:supabase
+
       - name: Compiler le site de test
         working-directory: gaec-chimounet-frontend
         env:

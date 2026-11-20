@@ -6,8 +6,16 @@ import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 
 const projectDirectory = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+let localEnv = "";
+
+try {
+    localEnv = await readFile(resolve(projectDirectory, ".env"), "utf8");
+} catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+}
+
 const envFile = Object.fromEntries(
-    (await readFile(resolve(projectDirectory, ".env"), "utf8"))
+    localEnv
         .split(/\r?\n/)
         .map((line) => line.trim())
         .filter((line) => line && !line.startsWith("#") && line.includes("="))
