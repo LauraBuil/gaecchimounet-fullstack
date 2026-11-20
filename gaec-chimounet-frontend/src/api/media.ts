@@ -118,7 +118,7 @@ export async function uploadMedia(
  * empêcher la suppression de la fiche qui le référence.
  */
 export async function removeMedia(path: string | null | undefined): Promise<void> {
-    if (!path || /^(https?:|data:)/.test(path)) {
+    if (!path || /^(https?:|data:|\/)/.test(path)) {
         return;
     }
 

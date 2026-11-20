@@ -82,8 +82,8 @@ type RecipePreviewRow = Pick<
     recipe_ingredients?: { name: string; position: number }[];
 };
 
-const RECIPE_PREVIEWS_CACHE_KEY = "gaec-chimounet:recipe-previews:v2";
-const FEATURED_RECIPES_CACHE_KEY = "gaec-chimounet:featured-recipes:v2";
+const RECIPE_PREVIEWS_CACHE_KEY = "gaec-chimounet:recipe-previews:v3";
+const FEATURED_RECIPES_CACHE_KEY = "gaec-chimounet:featured-recipes:v3";
 const PUBLIC_RECIPE_CACHE_DURATION_MS = 5 * 60_000;
 
 function byPosition<T extends { position: number }>(a: T, b: T): number {

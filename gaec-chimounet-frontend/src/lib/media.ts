@@ -24,7 +24,7 @@ export function mediaUrl(path: string | null | undefined): string {
 
     // Tolère une URL déjà complète, pour ne pas casser l'affichage si une
     // fiche pointe encore vers une image externe.
-    if (/^(https?:|data:)/.test(path)) {
+    if (/^(https?:|data:|\/)/.test(path)) {
         return path;
     }
 
